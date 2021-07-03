@@ -1,27 +1,35 @@
 import React, { useState } from 'react';
+import { Button } from '@material-ui/core';
 import styled from 'styled-components';
 import './App.css';
 import { Line, ResponsiveLine } from "@nivo/line";
-import { default as myData } from './data/tp.json';
+import { default as myData } from './data/tp_min.json';
 function App() {
   const [chartData, setChartData] = useState(myData);
   return (
     <div style={{ height: 300, widows: 600 }}>
+      <Button onClick={() => {
+        const size = Math.floor((Math.random() * myData[0].data.length) + 1);
+        const start = Math.floor((Math.random() * (myData[0].data.length - size)));
+        setChartData([{
+          "id": "fatezero",
+          "data": myData[0].data.slice(start, start + size),
+        }]);
+
+        console.log(chartData[0].data.length);
+      }}>hello</Button>
       <ResponsiveLine
         data={chartData}
         margin={{ top: 50, right: 160, bottom: 50, left: 60 }}
-        xScale={{ format: "%Y-%m-%dT%H:%M:%S.%L%Z", type: "time" }}
-        xFormat="time:%Y-%m-%dT%H:%M:%S.%L%Z"
-        yScale={{ type: "linear", stacked: false }}
+        xScale={{ format: "%Y-%m-%dT%H:%M:%S.%L", type: "time" }}
+        xFormat="time:%Y-%m-%dT%H:%M:%S.%L"
+        yScale={{ type: "linear", stacked: false, min: 0, max: 'auto' }}
         curve="monotoneX"
         axisTop={null}
+        animate={true}
         axisRight={{
-          tickValues: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-          format: "0.1",
-          legend: "",
+          tickSize: 100,
+          legend: "Scores",
           legendOffset: 0
         }}
         axisBottom={{
@@ -35,12 +43,8 @@ function App() {
           legendPosition: "middle"
         }}
         axisLeft={{
-          tickValues: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-          format: ".2",
-          legend: "CPU",
+          tickSize: 100,
+          legend: "Scores",
           legendOffset: -40,
           legendPosition: "middle"
         }}
@@ -55,8 +59,8 @@ function App() {
         pointLabel="y"
         pointLabelYOffset={-12}
         useMesh={true}
-        gridXValues={[0, 20, 40, 60, 80, 100, 120]}
-        gridYValues={[0, 500, 1000, 1500, 2000, 2500]}
+        // gridXValues={[0, 20, 40, 60, 80, 100, 120]}
+        // gridYValues={[0, 500, 1000, 1500, 2000, 2500]}
         legends={[
           {
             anchor: "bottom-right",
