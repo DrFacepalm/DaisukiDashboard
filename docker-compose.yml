@@ -1,0 +1,23 @@
+version: '3'
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+     - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: YWRma2psYWhmbGs7amFkZjthbGtqZmE7bGZrandlb2loYXdvcDtpaAo
+  api:
+    build: ./api
+    volumes:
+     - ./api:/api
+    ports:
+     - "4433:4433"
+    stdin_open: true
+    tty: true
+    environment: 
+     - MONGO_URL=mongodb://mongo_user:YWRma2psYWhmbGs7amFkZjthbGtqZmE7bGZrandlb2loYXdvcDtpaAo@0.0.0.0:27017/
+     - FLASK_APP=api/endpoints.py 
+     - FLASK_ENV=development
+     
