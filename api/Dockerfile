@@ -17,9 +17,9 @@ COPY . /api/
 # Make port 8000 available for the app
 EXPOSE 4433
 
-ENV MONGO_URL mongodb://mongo_user:this_is_a_safe_password@0.0.0.0:27017/ 
-ENV FLASK_APP endpoints.py 
-ENV FLASK_ENV development
+# ENV MONGO_URL mongodb://mongo_user:this_is_a_safe_password@0.0.0.0:27017/ 
+# ENV FLASK_APP endpoints.py 
+# ENV FLASK_ENV development
 
 # Be sure to use 0.0.0.0 for the host within the Docker container,
 # otherwise the browser won't be able to find it
