@@ -1,58 +1,40 @@
 from pymongo import MongoClient
 from datetime import datetime
+from dotenv import load_dotenv
 
-client = MongoClient('localhost', 27017)
+load_dotenv()
 
-db = client.test_database
+TOKEN = os.getenv("BOT_TOKEN")
+MONGO_URL = os.getenv("MONGO_URL", None)
+MODE = os.getenv("MODE", "development")
 
-collection = db.test_collection
+DB_NAME = os.getenv("DB_NAME", "test_db")
+COLLECTION_NAME = os.getenv("COLLECTION_NAME", "test_coll")
 
-# data = {
-#     "player": "moop",
-#     "tp-scores": [
-#         {
-#             "x": "2021-07-03T22:46:03.820",
-#             "y": 12345
-#         },
-#         {
-#             "x": "2021-07-03T22:46:04.160",
-#             "y": 123455
-#         },
-#         {
-#             "x": "2021-07-03T22:46:05.820",
-#             "y": 123456
-#         },
-#         {
-#             "x": "2021-07-03T22:46:06.820",
-#             "y": 1234578
-#         },
-#         {
-#             "x": "2021-07-03T22:46:07.860",
-#             "y": 1234589
-#         },
-#     ],
-# }
-
-# data_id = collection.insert_one(data).inserted_id
+client = MongoClient(MONGO_URL)
+db = client[DB_NAME]
+collection = db[COLLECTION_NAME]
 
 
 
 
-collection.find_one_and_update(
-    {'player': 'awoefajw'},
-    {'$push': {
-        'tp-scores': { 
-            "x": "2021-08-03T22:46:07.860",
-            "y": 229349
-        }
-    }},
-    upsert=True
-)
+
+
+# collection.find_one_and_update(
+#     {'player': 'awoefajw'},
+#     {'$push': {
+#         'tp-scores': { 
+#             "x": "2021-08-03T22:46:07.860",
+#             "y": 229349
+#         }
+#     }},
+#     upsert=True
+# )
 
 
 
-for d in collection.find({}):
-    print(d)
+# for d in collection.find({}):
+#     print(d)
 # print(collection.find({'player': 'poop'}))
 
 # print(data_id)
