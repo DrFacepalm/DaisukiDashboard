@@ -1,0 +1,17 @@
+version: '3'
+services:
+  bot:
+    build: ./bot
+    volumes:
+      - ./deploy/bot:/bot
+    env_file:
+      - ./bot/.env
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - ./deploy/db:/data/db
+    ports:
+      - "27017:27017"
+    env_file:
+      - ./.env
