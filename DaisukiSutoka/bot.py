@@ -24,7 +24,7 @@ if MONGO_URL and MODE == "production":
 
 
 def convert2int(s):
-    return int("".jnoin(filter(str.isdigit, s)))
+    return int("".join(filter(str.isdigit, s)))
 
 
 @client.event
