@@ -1,6 +1,8 @@
 from pymongo import MongoClient
 import os 
 
+print(os.environ['MONGO_URL'])
+
 client = MongoClient(os.environ['MONGO_URL'])
 
 db = client.db

@@ -5,7 +5,7 @@ services:
     volumes:
       - ./deploy/bot:/bot
     env_file:
-      - ./bot/.env
+      - ./.env
   mongo:
     image: mongo
     restart: always

@@ -17,6 +17,7 @@ mongo_client = None
 db = None
 coll = None
 if MONGO_URL and MODE == "production":
+    print(MONGO_URL)
     mongo_client = MongoClient(MONGO_URL)
     db = mongo_client[DB_NAME]
     coll = db[COLLECTION_NAME]
@@ -69,6 +70,7 @@ async def on_message(message):
                 coll.find_one_and_update(
                     {"player": name},
                     {"$push": {"tp-scores": {"x": timestamp, "y": score}}},
+                    upsert=True
                 )
 
 

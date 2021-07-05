@@ -13,6 +13,6 @@ services:
      - "27017:27017"
     volumes:
       - ./deploy/db:/data/db
-    environment:
+    env_file:
       - ./.env
       
