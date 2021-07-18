@@ -1,23 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { default as myData } from "./data/tp_min.json";
+import { default as myData } from "./data/tp.json";
 import {
   Typography,
   Container,
   Card,
-  Select,
-  MenuItem,
+  Grid,
+  Button,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core";
 import useLocalStorage from "./utils/LocalStorageHook";
+import SettingsDialog from "./components/settings/SettingsDialog";
 import ThemeProvider from "./themes/ThemeProvider";
-// import { createGlobalStyle } from "styled-components";
-// import "./App.css";
-import themesList from "./themes/_list.json";
-type themesType = {
-  name: string;
-  bgColor: string;
-  textColor: string;
-};
+import LineGraph, { LineGraphData } from "./components/nivo/LineGraph";
 
 const Header = styled.div`
   padding: 40px 0px;
@@ -35,29 +32,69 @@ function App() {
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setTheme(event.target.value as string);
   };
+  const [open, setOpen] = useState(false);
+  const [chartData, setChartData] = useState(myData);
+  const [checked, setChecked] = useState(
+    Object.fromEntries(myData.map(({ id }) => [id, true]))
+  );
+
+  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked({ ...checked, [event.target.name]: event.target.checked });
+    console.log(event.target.name, event.target.checked);
+  };
+
+  useEffect(() => {
+    setChartData(myData.filter(({ id }) => checked[id]));
+  }, [checked]);
   return (
     <ThemeProvider themeString={theme}>
       <StyledBackground>
+        <SettingsDialog
+          open={open}
+          setOpen={setOpen}
+          theme={theme}
+          handleChange={handleChange}
+        />
         <Container maxWidth="xl">
           <Card elevation={0}>
             <Header>
-              <Typography variant="h3">Daisuki Dashboard</Typography>
-              <Typography variant="overline">
+              <Grid
+                container
+                direction="row"
+                alignContent="space-between"
+                alignItems="flex-end"
+                spacing={2}
+              >
+                <Grid item>
+                  <Typography variant="h3">Daisuki Dashboard</Typography>
+                </Grid>
+                <Grid item>
+                  <Button onClick={() => setOpen(true)}>Settings</Button>
+                </Grid>
+              </Grid>
+              <Typography variant="subtitle1">
                 Custom Dashboard for Daisuki, The Ultimate Character Collection
                 Game!
               </Typography>
             </Header>
           </Card>
-          <Select value={theme} onChange={handleChange}>
-            {themesList.map((theme: themesType) => (
-              <MenuItem
-                style={{ color: theme.textColor, background: theme.bgColor }}
-                value={theme.name}
-              >
-                {theme.name}
-              </MenuItem>
-            ))}
-          </Select>
+          <Card elevation={0}>
+            <LineGraph data={chartData} />
+            <FormGroup row>
+              {myData.map(({ id }) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={checked[id]}
+                      onChange={handleCheck}
+                      name={id}
+                    />
+                  }
+                  label={id}
+                />
+              ))}
+            </FormGroup>
+          </Card>
         </Container>
       </StyledBackground>
     </ThemeProvider>
