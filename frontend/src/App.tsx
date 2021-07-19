@@ -1,94 +1,143 @@
-import React, { useState } from 'react';
-import { Button } from '@material-ui/core';
-import styled from 'styled-components';
-import './App.css';
-import { Line, ResponsiveLine } from "@nivo/line";
-import { default as myData } from './data/tp_min.json';
-function App() {
-  const [chartData, setChartData] = useState(myData);
-  return (
-    <div style={{ height: 300, widows: 600 }}>
-      <Button onClick={() => {
-        const size = Math.floor((Math.random() * myData[0].data.length) + 1);
-        const start = Math.floor((Math.random() * (myData[0].data.length - size)));
-        setChartData([{
-          "id": "fatezero",
-          "data": myData[0].data.slice(start, start + size),
-        }]);
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { default as myData } from "./data/data.json";
+import {
+  Typography,
+  Container,
+  Card,
+  Grid,
+  Button,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+} from "@material-ui/core";
+import useLocalStorage from "./utils/LocalStorageHook";
+import SettingsDialog from "./components/settings/SettingsDialog";
+import ThemeProvider from "./themes/ThemeProvider";
+import LineGraph from "./components/nivo/LineGraph";
 
-        console.log(chartData[0].data.length);
-      }}>hello</Button>
-      <ResponsiveLine
-        data={chartData}
-        margin={{ top: 50, right: 160, bottom: 50, left: 60 }}
-        xScale={{ format: "%Y-%m-%dT%H:%M:%S.%L", type: "time" }}
-        xFormat="time:%Y-%m-%dT%H:%M:%S.%L"
-        yScale={{ type: "linear", stacked: false, min: 0, max: 'auto' }}
-        curve="monotoneX"
-        axisTop={null}
-        animate={true}
-        axisRight={{
-          tickSize: 100,
-          legend: "Scores",
-          legendOffset: 0
-        }}
-        axisBottom={{
-          tickValues: "every 1 day",
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-          format: "%Y-%m-%d",
-          legend: "Time",
-          legendOffset: 36,
-          legendPosition: "middle"
-        }}
-        axisLeft={{
-          tickSize: 100,
-          legend: "Scores",
-          legendOffset: -40,
-          legendPosition: "middle"
-        }}
-        enableGridX={false}
-        colors={{ scheme: "spectral" }}
-        lineWidth={1}
-        pointSize={4}
-        pointColor={{ theme: "background" }}
-        pointBorderWidth={1}
-        pointBorderColor={{ from: "serieColor" }}
-        enablePointLabel={false}
-        pointLabel="y"
-        pointLabelYOffset={-12}
-        useMesh={true}
-        // gridXValues={[0, 20, 40, 60, 80, 100, 120]}
-        // gridYValues={[0, 500, 1000, 1500, 2000, 2500]}
-        legends={[
-          {
-            anchor: "bottom-right",
-            direction: "column",
-            justify: false,
-            translateX: 140,
-            translateY: 0,
-            itemsSpacing: 2,
-            itemDirection: "left-to-right",
-            itemWidth: 80,
-            itemHeight: 12,
-            itemOpacity: 0.75,
-            symbolSize: 12,
-            symbolShape: "circle",
-            symbolBorderColor: "rgba(0, 0, 0, .5)",
-            effects: [
-              {
-                on: "hover",
-                style: {
-                  itemBackground: "rgba(0, 0, 0, .03)",
-                  itemOpacity: 1
-                }
-              }
-            ]
-          }
-        ]}
-      />
-    </div>
+const Header = styled.div`
+  padding: 40px 0px;
+`;
+
+const StyledBackground = styled.div`
+  background: var(--bg-color);
+  min-height: 100vh;
+  max-width: 100vw;
+`;
+
+const StyledContainer = styled(Container)`
+  overflow-x: clip;
+`;
+
+function App() {
+  const [theme, setTheme] = useLocalStorage("theme", "8008");
+
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setTheme(event.target.value as string);
+  };
+  const [open, setOpen] = useState(false);
+  const [chartData, setChartData] = useState(myData);
+  const [checked, setChecked] = useState(
+    Object.fromEntries(myData.map(({ id }) => [id, true]))
+  );
+  const idToIndex = Object.fromEntries(
+    myData.map(({ id }, index) => [id, index])
+  );
+
+  const fillRepeatArray = (a: string[], length: number) => {
+    if (a.length >= length) {
+      return a.slice(0, length);
+    } else {
+      const repeats = Math.ceil(length / a.length);
+      return Array.from({ length: repeats }, () => a)
+        .flat()
+        .slice(0, length);
+    }
+  };
+
+  const originalColors = fillRepeatArray(
+    [
+      "#9e0142",
+      "#d53e4f",
+      "#f46d43",
+      "#fdae61",
+      "#fee08b",
+      "#ffffbf",
+      "#e6f598",
+      "#abdda4",
+      "#66c2a5",
+      "#3288bd",
+      "#5e4fa2",
+    ], // from nivo colors "spectral"
+    myData.length
+  );
+
+  const [colors, setColors] = useState(originalColors);
+
+  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked({ ...checked, [event.target.name]: event.target.checked });
+    console.log(event.target.name, event.target.checked);
+  };
+
+  useEffect(() => {
+    setChartData(myData.filter(({ id }) => checked[id]));
+    setColors(originalColors.filter((_, index) => checked[myData[index].id]));
+  }, [checked, originalColors]);
+  return (
+    <ThemeProvider themeString={theme}>
+      <StyledBackground>
+        <SettingsDialog
+          open={open}
+          setOpen={setOpen}
+          theme={theme}
+          handleChange={handleChange}
+        />
+        <StyledContainer maxWidth="xl">
+          <Header>
+            <Card elevation={0}>
+              <Grid
+                container
+                direction="row"
+                alignContent="space-between"
+                alignItems="flex-end"
+                spacing={2}
+              >
+                <Grid item>
+                  <Typography variant="h3">Daisuki Dashboard</Typography>
+                </Grid>
+                <Grid item>
+                  <Button onClick={() => setOpen(true)}>Settings</Button>
+                </Grid>
+              </Grid>
+              <Typography variant="subtitle1">
+                Custom Dashboard for Daisuki, The Ultimate Character Collection
+                Game!
+              </Typography>
+            </Card>
+          </Header>
+          <Card elevation={0}>
+            <FormGroup row>
+              {myData.map(({ id }) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={checked[id]}
+                      onChange={handleCheck}
+                      name={id}
+                      style={{ color: originalColors[idToIndex[id]] }}
+                    />
+                  }
+                  label={<Typography>{id}</Typography>}
+                />
+              ))}
+            </FormGroup>
+          </Card>
+          <LineGraph data={chartData} colors={colors} />
+          <Card elevation={0}></Card>
+        </StyledContainer>
+      </StyledBackground>
+    </ThemeProvider>
   );
 }
 
