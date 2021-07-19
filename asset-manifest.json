@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/DaisukiDashboard/static/css/main.6dea0f05.chunk.css",
-    "main.js": "/DaisukiDashboard/static/js/main.488993c1.chunk.js",
-    "main.js.map": "/DaisukiDashboard/static/js/main.488993c1.chunk.js.map",
+    "main.js": "/DaisukiDashboard/static/js/main.f9b127f6.chunk.js",
+    "main.js.map": "/DaisukiDashboard/static/js/main.f9b127f6.chunk.js.map",
     "runtime-main.js": "/DaisukiDashboard/static/js/runtime-main.1507c25c.js",
     "runtime-main.js.map": "/DaisukiDashboard/static/js/runtime-main.1507c25c.js.map",
     "static/js/2.46e8be49.chunk.js": "/DaisukiDashboard/static/js/2.46e8be49.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.1507c25c.js",
     "static/js/2.46e8be49.chunk.js",
     "static/css/main.6dea0f05.chunk.css",
-    "static/js/main.488993c1.chunk.js"
+    "static/js/main.f9b127f6.chunk.js"
   ]
 }
