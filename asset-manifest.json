@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/DaisukiDashboard/static/css/main.6dea0f05.chunk.css",
-    "main.js": "/DaisukiDashboard/static/js/main.f9b127f6.chunk.js",
-    "main.js.map": "/DaisukiDashboard/static/js/main.f9b127f6.chunk.js.map",
-    "runtime-main.js": "/DaisukiDashboard/static/js/runtime-main.1507c25c.js",
-    "runtime-main.js.map": "/DaisukiDashboard/static/js/runtime-main.1507c25c.js.map",
-    "static/js/2.46e8be49.chunk.js": "/DaisukiDashboard/static/js/2.46e8be49.chunk.js",
-    "static/js/2.46e8be49.chunk.js.map": "/DaisukiDashboard/static/js/2.46e8be49.chunk.js.map",
-    "static/js/3.1167b8fa.chunk.js": "/DaisukiDashboard/static/js/3.1167b8fa.chunk.js",
-    "static/js/3.1167b8fa.chunk.js.map": "/DaisukiDashboard/static/js/3.1167b8fa.chunk.js.map",
-    "index.html": "/DaisukiDashboard/index.html",
-    "static/css/main.6dea0f05.chunk.css.map": "/DaisukiDashboard/static/css/main.6dea0f05.chunk.css.map",
-    "static/js/2.46e8be49.chunk.js.LICENSE.txt": "/DaisukiDashboard/static/js/2.46e8be49.chunk.js.LICENSE.txt"
+    "main.css": "/Daisukidashboard/static/css/main.6dea0f05.chunk.css",
+    "main.js": "/Daisukidashboard/static/js/main.0758af12.chunk.js",
+    "main.js.map": "/Daisukidashboard/static/js/main.0758af12.chunk.js.map",
+    "runtime-main.js": "/Daisukidashboard/static/js/runtime-main.5a81c7dc.js",
+    "runtime-main.js.map": "/Daisukidashboard/static/js/runtime-main.5a81c7dc.js.map",
+    "static/js/2.fd4c4774.chunk.js": "/Daisukidashboard/static/js/2.fd4c4774.chunk.js",
+    "static/js/2.fd4c4774.chunk.js.map": "/Daisukidashboard/static/js/2.fd4c4774.chunk.js.map",
+    "static/js/3.1167b8fa.chunk.js": "/Daisukidashboard/static/js/3.1167b8fa.chunk.js",
+    "static/js/3.1167b8fa.chunk.js.map": "/Daisukidashboard/static/js/3.1167b8fa.chunk.js.map",
+    "index.html": "/Daisukidashboard/index.html",
+    "static/css/main.6dea0f05.chunk.css.map": "/Daisukidashboard/static/css/main.6dea0f05.chunk.css.map",
+    "static/js/2.fd4c4774.chunk.js.LICENSE.txt": "/Daisukidashboard/static/js/2.fd4c4774.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.1507c25c.js",
-    "static/js/2.46e8be49.chunk.js",
+    "static/js/runtime-main.5a81c7dc.js",
+    "static/js/2.fd4c4774.chunk.js",
     "static/css/main.6dea0f05.chunk.css",
-    "static/js/main.f9b127f6.chunk.js"
+    "static/js/main.0758af12.chunk.js"
   ]
 }
