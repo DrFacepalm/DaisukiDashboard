@@ -8,8 +8,7 @@ import {
   Button,
   Select,
   MenuItem,
-  useMediaQuery,
-  useTheme,
+  Link,
   Typography,
 } from "@material-ui/core";
 
@@ -42,10 +41,23 @@ const SettingsDialog = ({
       fullWidth={true}
       maxWidth={"md"}
     >
-      <DialogTitle>Settings</DialogTitle>
+      <DialogTitle>
+        <Typography variant="h5" color="primary">
+          Settings
+        </Typography>
+      </DialogTitle>
       <DialogContent dividers={true}>
         <DialogContentText>
-          <Typography>Select Theme: </Typography>
+          <Typography variant="h6" color="primary">
+            About us:
+          </Typography>
+          <Typography>
+            Daisuki Dashboard is an open source project aiming to bring more
+            statistics and data to the Daisuki Discord Bot game.
+          </Typography>
+          <Typography variant="h6" color="primary">
+            Select Theme:
+          </Typography>
           <Select value={theme} onChange={handleChange}>
             {themesList
               .sort((lhs: themesType, rhs: themesType) =>
@@ -60,6 +72,29 @@ const SettingsDialog = ({
                 </MenuItem>
               ))}
           </Select>
+          <Typography variant="h6" color="primary">
+            Creators:
+          </Typography>
+          <ul>
+            <li>
+              <Typography>
+                <Link href="https://github.com/xpire">xpire</Link>
+              </Typography>
+            </li>
+            <li>
+              <Typography>
+                <Link href="https://github.com/DrFacepalm">DrFacepalm</Link>
+              </Typography>
+            </li>
+          </ul>
+          <Typography variant="h6" color="primary">
+            Source:
+          </Typography>
+          <Typography>
+            <Link href="https://github.com/DrFacepalm/DaisukiDashboard">
+              https://github.com/DrFacepalm/DaisukiDashboard
+            </Link>
+          </Typography>
         </DialogContentText>
       </DialogContent>
       <DialogActions>

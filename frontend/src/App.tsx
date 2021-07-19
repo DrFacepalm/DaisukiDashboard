@@ -15,6 +15,7 @@ import useLocalStorage from "./utils/LocalStorageHook";
 import SettingsDialog from "./components/settings/SettingsDialog";
 import ThemeProvider from "./themes/ThemeProvider";
 import LineGraph, { LineGraphData } from "./components/nivo/LineGraph";
+import BumpGraph from "./components/nivo/BumpGraph";
 
 const Header = styled.div`
   padding: 40px 0px;
@@ -23,7 +24,11 @@ const Header = styled.div`
 const StyledBackground = styled.div`
   background: var(--bg-color);
   min-height: 100vh;
-  min-width: 100vw;
+  max-width: 100vw;
+`;
+
+const StyledContainer = styled(Container)`
+  overflow-x: clip;
 `;
 
 function App() {
@@ -37,6 +42,39 @@ function App() {
   const [checked, setChecked] = useState(
     Object.fromEntries(myData.map(({ id }) => [id, true]))
   );
+  const idToIndex = Object.fromEntries(
+    myData.map(({ id }, index) => [id, index])
+  );
+
+  const fillRepeatArray = (a: string[], length: number) => {
+    if (a.length >= length) {
+      return a.slice(0, length);
+    } else {
+      const repeats = Math.ceil(length / a.length);
+      return Array.from({ length: repeats }, () => a)
+        .flat()
+        .slice(0, length);
+    }
+  };
+
+  const originalColors = fillRepeatArray(
+    [
+      "#9e0142",
+      "#d53e4f",
+      "#f46d43",
+      "#fdae61",
+      "#fee08b",
+      "#ffffbf",
+      "#e6f598",
+      "#abdda4",
+      "#66c2a5",
+      "#3288bd",
+      "#5e4fa2",
+    ], // from nivo colors "spectral"
+    myData.length
+  );
+
+  const [colors, setColors] = useState(originalColors);
 
   const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked({ ...checked, [event.target.name]: event.target.checked });
@@ -45,6 +83,7 @@ function App() {
 
   useEffect(() => {
     setChartData(myData.filter(({ id }) => checked[id]));
+    setColors(originalColors.filter((_, index) => checked[myData[index].id]));
   }, [checked]);
   return (
     <ThemeProvider themeString={theme}>
@@ -55,9 +94,9 @@ function App() {
           theme={theme}
           handleChange={handleChange}
         />
-        <Container maxWidth="xl">
-          <Card elevation={0}>
-            <Header>
+        <StyledContainer maxWidth="xl">
+          <Header>
+            <Card elevation={0}>
               <Grid
                 container
                 direction="row"
@@ -76,10 +115,9 @@ function App() {
                 Custom Dashboard for Daisuki, The Ultimate Character Collection
                 Game!
               </Typography>
-            </Header>
-          </Card>
+            </Card>
+          </Header>
           <Card elevation={0}>
-            <LineGraph data={chartData} />
             <FormGroup row>
               {myData.map(({ id }) => (
                 <FormControlLabel
@@ -88,14 +126,17 @@ function App() {
                       checked={checked[id]}
                       onChange={handleCheck}
                       name={id}
+                      style={{ color: originalColors[idToIndex[id]] }}
                     />
                   }
-                  label={id}
+                  label={<Typography>{id}</Typography>}
                 />
               ))}
             </FormGroup>
           </Card>
-        </Container>
+          <LineGraph data={chartData} colors={colors} />
+          <Card elevation={0}></Card>
+        </StyledContainer>
       </StyledBackground>
     </ThemeProvider>
   );

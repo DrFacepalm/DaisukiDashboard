@@ -46,11 +46,17 @@ const theme = {
 const StyledToolTip = styled(Card)`
   background: var(--bg-color);
   color: var(--main-color);
+  // pointer-events: none;
+  // width: 200px;
+  // height: 100px;
 `;
 const customTooltip: PointTooltip = ({ point }: { point: Point }) => (
   <StyledToolTip>
     <CardContent>
-      <Typography color="textSecondary">
+      {console.log(point.serieId, point.serieColor)}
+      <Typography
+      // color="textSecondary"
+      >
         <span style={{ color: point.serieColor }}>[</span>
         {point.serieId}
         <span style={{ color: point.serieColor }}>]</span>
@@ -62,18 +68,26 @@ const customTooltip: PointTooltip = ({ point }: { point: Point }) => (
       {/* {point.y} */}
     </CardContent>
   </StyledToolTip>
+  // <></>
 );
 
-const LineGraph = ({ data }: { data: LineGraphData[] }) => {
+const LineGraph = ({
+  data,
+  colors,
+}: {
+  data: LineGraphData[];
+  colors: string[];
+}) => {
   return (
-    <div style={{ height: "80vh" }}>
+    <div style={{ height: "70vh" }}>
       <ResponsiveLine
         data={data}
         animate={true}
         useMesh={true}
         // enableSlices={"x"}
         // enableCrosshair={true}
-        margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
+        // debugMesh={true}
+        margin={{ top: 50, right: 80, bottom: 50, left: 80 }}
         xScale={{ format: "%Y-%m-%dT%H:%M:%S.%L", type: "time" }}
         xFormat="time:%Y-%m-%d (%H:%M:%S)"
         yScale={{ type: "linear", stacked: false, min: 0, max: "auto" }}
@@ -83,13 +97,13 @@ const LineGraph = ({ data }: { data: LineGraphData[] }) => {
         axisTop={null}
         axisRight={null}
         axisBottom={{
-          tickValues: "every 1 day",
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 30,
+          // tickValues: "every 1 day",
+          // tickSize: 5,
+          // tickPadding: 5,
+          // tickRotation: 30,
           format: "%y-%m-%d",
           legend: "Time",
-          legendOffset: 36,
+          legendOffset: 40,
           legendPosition: "middle",
         }}
         axisLeft={{
@@ -98,42 +112,18 @@ const LineGraph = ({ data }: { data: LineGraphData[] }) => {
           tickRotation: 0,
           format: "",
           legend: "Score",
-          legendOffset: -60,
+          legendOffset: -65,
           legendPosition: "middle",
         }}
-        colors={{ scheme: "spectral" }}
-        pointColor={{ theme: "background" }}
+        // colors={{ scheme: "spectral" }}
+        // colors={["#03C8B1", "#5AA8FF", "#D44086", "#EC9936", "#FFCC00"]}
+        colors={colors}
+        pointColor={{ from: "color" }}
         pointBorderWidth={1}
         pointBorderColor={{ from: "serieColor" }}
         enablePointLabel={false}
         pointLabel="xFormatted"
         pointLabelYOffset={-12}
-        // legends={[
-        //   {
-        //     anchor: "bottom-right",
-        //     direction: "column",
-        //     justify: false,
-        //     translateX: 140,
-        //     translateY: 0,
-        //     itemsSpacing: 2,
-        //     itemDirection: "left-to-right",
-        //     itemWidth: 80,
-        //     itemHeight: 12,
-        //     itemOpacity: 0.75,
-        //     symbolSize: 12,
-        //     symbolShape: "circle",
-        //     symbolBorderColor: "rgba(0, 0, 0, .5)",
-        //     effects: [
-        //       {
-        //         on: "hover",
-        //         style: {
-        //           itemBackground: "rgba(0, 0, 0, .03)",
-        //           itemOpacity: 1,
-        //         },
-        //       },
-        //     ],
-        //   },
-        // ]}
       />
     </div>
   );
