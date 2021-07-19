@@ -1,7 +1,6 @@
 import React, { useLayoutEffect } from "react";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core";
 import { createGlobalStyle } from "styled-components";
-import useLocalStorage from "../utils/LocalStorageHook";
 import rawThemes from "./themes.json";
 
 type MyThemeProviderProps = {
@@ -54,11 +53,11 @@ const MyThemeProvider = ({ children, themeString }: MyThemeProviderProps) => {
 
   useLayoutEffect(() => {
     // set the theme based on themeString
-    console.log("setting theme to", themeString);
-    themes[themeString] &&
+    if (themes[themeString]) {
       Object.entries(themes[themeString]).map((value: [string, string]) =>
         set(value[0], value[1])
       );
+    }
 
     const cssTheme = createMuiTheme({
       palette: {

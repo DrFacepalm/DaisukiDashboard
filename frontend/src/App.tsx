@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { default as myData } from "./data/tp.json";
+import { default as myData } from "./data/data.json";
 import {
   Typography,
   Container,
@@ -14,8 +14,7 @@ import {
 import useLocalStorage from "./utils/LocalStorageHook";
 import SettingsDialog from "./components/settings/SettingsDialog";
 import ThemeProvider from "./themes/ThemeProvider";
-import LineGraph, { LineGraphData } from "./components/nivo/LineGraph";
-import BumpGraph from "./components/nivo/BumpGraph";
+import LineGraph from "./components/nivo/LineGraph";
 
 const Header = styled.div`
   padding: 40px 0px;
@@ -84,7 +83,7 @@ function App() {
   useEffect(() => {
     setChartData(myData.filter(({ id }) => checked[id]));
     setColors(originalColors.filter((_, index) => checked[myData[index].id]));
-  }, [checked]);
+  }, [checked, originalColors]);
   return (
     <ThemeProvider themeString={theme}>
       <StyledBackground>

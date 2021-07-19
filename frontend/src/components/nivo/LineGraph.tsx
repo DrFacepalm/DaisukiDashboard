@@ -1,7 +1,6 @@
 import { ResponsiveLine, PointTooltip, Point } from "@nivo/line";
-import { Tooltip } from "@nivo/tooltip";
 import styled from "styled-components";
-import { Card, CardContent, Grid, Typography } from "@material-ui/core";
+import { Card, CardContent, Typography } from "@material-ui/core";
 export type LineGraphData = {
   id: string;
   data: LineGraphDataPoint[];
@@ -84,7 +83,7 @@ const LineGraph = ({
         // enableSlices={"x"}
         // enableCrosshair={true}
         // debugMesh={true}
-        margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
+        margin={{ top: 50, right: 50, bottom: 50, left: 100 }}
         xScale={{ format: "%Y-%m-%dT%H:%M:%S.%L", type: "time" }}
         xFormat="time:%Y-%m-%d (%H:%M:%S)"
         yScale={{ type: "linear", stacked: false, min: 0, max: "auto" }}
@@ -109,7 +108,7 @@ const LineGraph = ({
           tickRotation: 0,
           format: "",
           legend: "Score",
-          legendOffset: -65,
+          legendOffset: -80,
           legendPosition: "middle",
         }}
         // colors={{ scheme: "spectral" }}
