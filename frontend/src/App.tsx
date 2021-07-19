@@ -83,7 +83,7 @@ function App() {
   useEffect(() => {
     setChartData(myData.filter(({ id }) => checked[id]));
     setColors(originalColors.filter((_, index) => checked[myData[index].id]));
-  }, [checked, originalColors]);
+  }, [checked]);
   return (
     <ThemeProvider themeString={theme}>
       <StyledBackground>
