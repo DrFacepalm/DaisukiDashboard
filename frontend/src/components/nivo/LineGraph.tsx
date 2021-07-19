@@ -50,13 +50,10 @@ const StyledToolTip = styled(Card)`
   // width: 200px;
   // height: 100px;
 `;
-const customTooltip: PointTooltip = ({ point }: { point: Point }) => (
+const CustomTooltip: PointTooltip = ({ point }: { point: Point }) => (
   <StyledToolTip>
     <CardContent>
-      {console.log(point.serieId, point.serieColor)}
-      <Typography
-      // color="textSecondary"
-      >
+      <Typography>
         <span style={{ color: point.serieColor }}>[</span>
         {point.serieId}
         <span style={{ color: point.serieColor }}>]</span>
@@ -87,13 +84,13 @@ const LineGraph = ({
         // enableSlices={"x"}
         // enableCrosshair={true}
         // debugMesh={true}
-        margin={{ top: 50, right: 80, bottom: 50, left: 80 }}
+        margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
         xScale={{ format: "%Y-%m-%dT%H:%M:%S.%L", type: "time" }}
         xFormat="time:%Y-%m-%d (%H:%M:%S)"
         yScale={{ type: "linear", stacked: false, min: 0, max: "auto" }}
         curve="natural"
         theme={theme}
-        tooltip={customTooltip}
+        tooltip={CustomTooltip}
         axisTop={null}
         axisRight={null}
         axisBottom={{

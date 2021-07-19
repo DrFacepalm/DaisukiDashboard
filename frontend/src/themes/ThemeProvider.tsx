@@ -45,6 +45,10 @@ const MyThemeProvider = ({ children, themeString }: MyThemeProviderProps) => {
         --colorful-error-extra-color: #7e2a33;
         transition-duration: 1s;
     }
+    
+    body {
+      background: var(--bg-color);
+    }
   `;
   const [theme, setTheme] = React.useState(createMuiTheme());
 
