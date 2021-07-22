@@ -16,19 +16,9 @@ DAISUKI_USER_ID = 655888685086277632
 
 client = discord.Client()
 
-mongo_client = None
-db = None
-coll = None
-if MONGO_URL and MODE == "production":
-    print(MONGO_URL)
-    mongo_client = MongoClient(MONGO_URL)
-    db = mongo_client[DB_NAME]
-    coll = db[COLLECTION_NAME]
-
-
-def convert2int(s):
-    return int("".join(filter(str.isdigit, s)))
-
+mongo_client = MongoClient(MONGO_URL)
+db = mongo_client[DB_NAME]
+coll = db[COLLECTION_NAME]
 
 @client.event
 async def on_ready():
@@ -40,7 +30,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if message.author.id != DAISUKI_USER_ID:
+    if message.author.id == DAISUKI_USER_ID:
         handle_tp_message(message, coll)
         handle_wl_messsage(message, coll)
 
