@@ -2,6 +2,7 @@ import os
 import discord
 from dotenv import load_dotenv
 from pymongo import MongoClient
+from utils import handle_tp_message, handle_wl_messsage
 
 load_dotenv()
 
@@ -10,6 +11,8 @@ MONGO_URL = os.getenv("MONGO_URL", None)
 MODE = os.getenv("MODE", "development")
 DB_NAME = os.getenv("DB_NAME", "test_db")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "test_coll")
+
+DAISUKI_USER_ID = 655888685086277632
 
 client = discord.Client()
 
@@ -37,41 +40,9 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-
-    if len(message.embeds) > 0 and message.embeds[0].title == "Top Players":
-        data = []
-
-        timestamp = message.created_at
-
-        if message.embeds[0].fields:
-            names = message.embeds[0].fields[0].value.split("\n")
-            scores = message.embeds[0].fields[1].value.split("\n")
-
-            for (name, score) in zip(names, scores):
-                name = name.strip().split(". ")[1]
-                score = convert2int(score)
-                data.append([timestamp.isoformat(timespec="milliseconds"), name, score])
-
-        if message.embeds[0].description:
-            desc = message.embeds[0].description.split("\n\n")
-
-            for item in desc:
-                x = item.split("\n")
-                name = x[0].strip().split(". ")[1]
-                score = convert2int(x[1])
-                data.append([timestamp.isoformat(timespec="milliseconds"), name, score])
-
-        for timestamp, name, score in data:
-            if MODE == "development":
-                f = open(f"{name}.dat", "a")
-                f.write(f"{timestamp}, {score}\n")
-                f.close()
-            if MODE == "production":
-                coll.find_one_and_update(
-                    {"player": name},
-                    {"$push": {"tp-scores": {"x": timestamp, "y": score}}},
-                    upsert=True
-                )
+    if message.author.id != DAISUKI_USER_ID:
+        handle_tp_message(message, coll)
+        handle_wl_messsage(message, coll)
 
 
 client.run(TOKEN)
