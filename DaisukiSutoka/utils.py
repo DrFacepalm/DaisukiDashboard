@@ -1,6 +1,14 @@
-def handle_tp_message(message, collection):
+import re
+
+
+def handle_tp_message(message, collection, rateLimiter):
     if len(message.embeds) != 1 or message.embeds[0].title != "Top Players":
         return
+
+    # Rate limiting things
+    if rateLimiter.seconds_since_tp(message) < 60 * 30:
+        return
+    rateLimiter.update_tp(message)
 
     data = []
 
@@ -33,7 +41,7 @@ def handle_tp_message(message, collection):
         )
 
 
-def handle_wl_messsage(message, collection):
+def handle_wl_messsage(message, collection, rateLimiter):
     if len(message.embeds) != 1 or "Wished by" not in message.content:
         return
 
@@ -43,6 +51,44 @@ def handle_wl_messsage(message, collection):
             {"$push": {"wl-times": message.created_at}},
             upsert=True,
         )
+
+
+def handle_store_message(message, collection, rateLimiter):
+    if len(message.embeds) != 1 or "'s Store" not in message.embeds[0].title:
+        return
+
+    embed = message.embeds[0]
+    player = embed.title.rsplit("'s ", 1)[0]
+
+    if rateLimiter.seconds_since_sp(message, player) < 60 * 30:
+        return
+    rateLimiter.update_sp(message, player)
+
+    sp_str = re.match(r"You have \*\*([0-9,]+) SP\*\*", embed.description).group(1)
+    sp = convert2int(sp_str)
+
+    collection.find_one_and_update(
+        {"player": player}, {"$push": {"sp-values": {"x": message.created_at, "y": sp}}}
+    )
+
+
+def handle_collection_message(message, collection, rateLimiter):
+    if len(message.embeds) != 1 or "'s Collection" not in message.embeds[0].title:
+        return
+
+    embed = message.embeds[0]
+    player = embed.title.rsplit("'s ", 1)[0]
+
+    if rateLimiter.seconds_since_sp(message, player) < 60 * 30:
+        return
+    rateLimiter.update_sp(message, player)
+
+    sp_str = re.match(r"\*\*([0-9,]+) SP\*\*", embed.description).group(1)
+    sp = convert2int(sp_str)
+
+    collection.find_one_and_update(
+        {"player": player}, {"$push": {"sp-values": {"x": message.created_at, "y": sp}}}
+    )
 
 
 def convert2int(s):

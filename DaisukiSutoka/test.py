@@ -1,8 +1,11 @@
 import os
+import re
 import time
 import discord
+
 from dotenv import load_dotenv
 from pymongo import MongoClient
+from RateLimiter import RateLimiter
 
 load_dotenv()
 
@@ -16,6 +19,7 @@ COLLECTION_NAME = os.getenv("COLLECTION_NAME", "test_coll")
 DAISUKI_USER_ID = 655888685086277632
 
 client = discord.Client()
+rateLimiter = RateLimiter()
 
 
 @client.event
@@ -26,15 +30,43 @@ async def on_ready():
         print(f"{guild.name}:{guild.id}")
 
 
+def convert2int(s):
+    return int("".join(filter(str.isdigit, s)))
+
+
 @client.event
 async def on_message(message):
-    print(message.author.id)
-    if message.author.id == DAISUKI_USER_ID:
-        print("ASDFASDF")
+    if len(message.embeds) != 1 or "'s Collection" not in message.embeds[0].title:
+        return
+
+    embed = message.embeds[0]
+
+    player = embed.title.rsplit("'s ", 1)[0]
+
+    sp_str = re.match(r"\*\*([0-9,]+) SP\*\*", embed.description).group(1)
+
+    # embed.description.split("SP**")[0].split("**")[0].strip()
+
+    print("sp str", convert2int(sp_str))
+    print("player", player)
+    # print("sp", sp)
+
+    # if rateLimiter.seconds_since_sp(message) < 15:
+    #     return
+    # rateLimiter.update_sp(message)
+
+    # print(message.content)
+
+    # messages = await channel.history(oldest_first=True, after=None, limit=2).flatten()
+    # difference = messages[1].created_at - messages[0].created_at
+    # print("hours", difference.seconds // 3600)
+
+    # if message.author.id == DAISUKI_USER_ID:
+    #     print("ASDFASDF")
     # if message.content != "!@#$%^&*()test":
     #     return
 
-    channel = message.channel
+    # channel = message.channel
 
     # after = None
     # loopy = True
@@ -55,10 +87,10 @@ async def on_message(message):
     #     time.sleep(5)
     #     print(wishes)
 
-    if len(message.mentions) > 0:
-        if "Wished by" in message.content:
-            for mention in message.mentions:
-                print(mention.name, message.created_at)
+    # if len(message.mentions) > 0:
+    #     if "Wished by" in message.content:
+    #         for mention in message.mentions:
+    #             print(mention.name, message.created_at)
 
 
 client.run(TOKEN)
