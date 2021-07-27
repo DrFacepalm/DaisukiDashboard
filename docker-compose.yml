@@ -15,4 +15,14 @@ services:
       - ./deploy/db:/data/db
     env_file:
       - ./.env
+  api:
+    build: ./api
+    volumes:
+      - ./deploy/api:/api
+    ports:
+      - "4433:4433"
+    stdin_open: true
+    tty: true
+    env_file:
+      - ./api/.env
       
