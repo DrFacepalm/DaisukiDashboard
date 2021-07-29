@@ -1,7 +1,7 @@
-import React, { useLayoutEffect } from "react";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core";
-import { createGlobalStyle } from "styled-components";
-import rawThemes from "./themes.json";
+import React, {useLayoutEffect} from 'react';
+import {createMuiTheme, ThemeProvider} from '@material-ui/core';
+import {createGlobalStyle} from 'styled-components';
+import rawThemes from './themes.json';
 
 type MyThemeProviderProps = {
   children?: React.ReactNode;
@@ -9,15 +9,15 @@ type MyThemeProviderProps = {
 };
 
 type themeType = {
-  "--bg-color"?: string;
-  "--main-color"?: string;
-  "--caret-color"?: string;
-  "--sub-color"?: string;
-  "--text-color"?: string;
-  "--error-color"?: string;
-  "--error-extra-color"?: string;
-  "--colorful-error-color"?: string;
-  "--colorful-error-extra-color"?: string;
+  '--bg-color'?: string;
+  '--main-color'?: string;
+  '--caret-color'?: string;
+  '--sub-color'?: string;
+  '--text-color'?: string;
+  '--error-color'?: string;
+  '--error-extra-color'?: string;
+  '--colorful-error-color'?: string;
+  '--colorful-error-extra-color'?: string;
 };
 
 const themes: {
@@ -30,7 +30,7 @@ const get = (key: string) =>
 const set = (key: string, value: string) =>
   document.documentElement.style.setProperty(key, value);
 
-const MyThemeProvider = ({ children, themeString }: MyThemeProviderProps) => {
+const MyThemeProvider = ({children, themeString}: MyThemeProviderProps) => {
   const GlobalStyle = createGlobalStyle`
     html {
         --bg-color: #323437;
@@ -55,41 +55,41 @@ const MyThemeProvider = ({ children, themeString }: MyThemeProviderProps) => {
     // set the theme based on themeString
     if (themes[themeString]) {
       Object.entries(themes[themeString]).map((value: [string, string]) =>
-        set(value[0], value[1])
+        set(value[0], value[1]),
       );
     }
 
     const cssTheme = createMuiTheme({
       palette: {
         primary: {
-          main: get("--main-color"),
-          contrastText: get("--text-color"),
+          main: get('--main-color'),
+          contrastText: get('--text-color'),
         },
         background: {
-          default: get("--bg-color"),
-          paper: get("--bg-color"),
+          default: get('--bg-color'),
+          paper: get('--bg-color'),
         },
         secondary: {
-          main: get("--caret-color"),
-          contrastText: get("--text-color"),
+          main: get('--caret-color'),
+          contrastText: get('--text-color'),
         },
         error: {
-          main: get("--error-color"),
-          contrastText: get("--text-color"),
+          main: get('--error-color'),
+          contrastText: get('--text-color'),
         },
         warning: {
-          main: get("--colorful-error-color"),
-          contrastText: get("--text-color"),
+          main: get('--colorful-error-color'),
+          contrastText: get('--text-color'),
         },
         info: {
-          main: get("--colorful-error-color"),
-          contrastText: get("--text-color"),
+          main: get('--colorful-error-color'),
+          contrastText: get('--text-color'),
         },
         text: {
-          primary: get("--text-color"),
-          secondary: get("--sub-color"),
-          disabled: get("--sub-color"),
-          hint: get("--sub-color"),
+          primary: get('--text-color'),
+          secondary: get('--sub-color'),
+          disabled: get('--sub-color'),
+          hint: get('--sub-color'),
         },
       },
     });

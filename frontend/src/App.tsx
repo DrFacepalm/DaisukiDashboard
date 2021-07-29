@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { default as myData } from "./data/data.json";
+import React, {useState, useEffect} from 'react';
+import styled from 'styled-components';
+import {default as myData} from './data/data.json';
 import {
   Typography,
   Container,
@@ -10,11 +10,13 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
-} from "@material-ui/core";
-import useLocalStorage from "./utils/LocalStorageHook";
-import SettingsDialog from "./components/settings/SettingsDialog";
-import ThemeProvider from "./themes/ThemeProvider";
-import LineGraph from "./components/nivo/LineGraph";
+} from '@material-ui/core';
+import {useLocalStorage, fillRepeatArray} from './utils';
+import SettingsDialog from './components/settings/SettingsDialog';
+import ThemeProvider from './themes/ThemeProvider';
+import LineGraph from './components/nivo/LineGraph';
+
+type ChartData = typeof myData;
 
 const Header = styled.div`
   padding: 40px 0px;
@@ -30,60 +32,132 @@ const StyledContainer = styled(Container)`
   overflow-x: clip;
 `;
 
-function App() {
-  const [theme, setTheme] = useLocalStorage("theme", "8008");
+function Graph(props: {
+  ready: any;
+  labelData: any;
+  chartData: any;
+}) {
+  const [checked, setChecked] = useState(
+      Object.fromEntries(props.labelData.map((id) => [id, true])),
+  );
+  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked({...checked, [event.target.name]: event.target.checked});
+  };
+  const idToIndex = Object.fromEntries(
+      props.labelData.map((id, index) => [id, index]),
+  );
 
+  const [displayData, setDisplayData] = useState([] as ChartData);
+
+  const originalColors = fillRepeatArray(
+      [
+        '#9e0142',
+        '#d53e4f',
+        '#f46d43',
+        '#fdae61',
+        '#fee08b',
+        '#ffffbf',
+        '#e6f598',
+        '#abdda4',
+        '#66c2a5',
+        '#3288bd',
+        '#5e4fa2',
+      ], // from nivo colors "spectral"
+      props.chartData.length,
+  );
+  const [colors, setColors] = useState(originalColors);
+
+  useEffect(() => {
+    setDisplayData(props.chartData.filter(({id}) => checked[id]));
+    setColors(colors.filter((_, i) => checked[props.labelData[i].id]));
+  }, [checked]);
+
+  if (props.ready) {
+    setDisplayData(props.chartData);
+    return (
+      <div>
+        <Card elevation={0}>
+          <FormGroup row>
+            {props.labelData.map((id) => (
+              <FormControlLabel
+                key={id}
+                control={
+                  <Checkbox
+                    checked={checked[id]}
+                    onChange={handleCheck}
+                    name={id}
+                    style={{color: colors[idToIndex[id]]}}
+                  />
+                }
+                label={<Typography>{id}</Typography>}
+              />
+            ))}
+          </FormGroup>
+        </Card>
+        <LineGraph data={displayData} colors={colors} />;
+      </div>
+
+    );
+  }
+  return <div>Not Ready</div>;
+}
+
+/**
+ *
+ * @returns
+ */
+function App() {
+  const [theme, setTheme] = useLocalStorage('theme', '8008');
+  const [chartData, setChartData] = useState([] as ChartData);
+  const [labelData, setLabelData] = useState([] as Array<string>);
+  const [open, setOpen] = useState(false);
+  const [ready, setReady] = useState(false);
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setTheme(event.target.value as string);
   };
-  const [open, setOpen] = useState(false);
-  const [chartData, setChartData] = useState(myData);
-  const [checked, setChecked] = useState(
-    Object.fromEntries(myData.map(({ id }) => [id, true]))
-  );
-  const idToIndex = Object.fromEntries(
-    myData.map(({ id }, index) => [id, index])
-  );
 
-  const fillRepeatArray = (a: string[], length: number) => {
-    if (a.length >= length) {
-      return a.slice(0, length);
-    } else {
-      const repeats = Math.ceil(length / a.length);
-      return Array.from({ length: repeats }, () => a)
-        .flat()
-        .slice(0, length);
-    }
+
+  const [checked, setChecked] = useState(
+      Object.fromEntries(labelData.map((id) => [id, true])),
+  );
+  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked({...checked, [event.target.name]: event.target.checked});
   };
+  const idToIndex = Object.fromEntries(
+      labelData.map((id, index) => [id, index]),
+  );
 
   const originalColors = fillRepeatArray(
-    [
-      "#9e0142",
-      "#d53e4f",
-      "#f46d43",
-      "#fdae61",
-      "#fee08b",
-      "#ffffbf",
-      "#e6f598",
-      "#abdda4",
-      "#66c2a5",
-      "#3288bd",
-      "#5e4fa2",
-    ], // from nivo colors "spectral"
-    myData.length
+      [
+        '#9e0142',
+        '#d53e4f',
+        '#f46d43',
+        '#fdae61',
+        '#fee08b',
+        '#ffffbf',
+        '#e6f598',
+        '#abdda4',
+        '#66c2a5',
+        '#3288bd',
+        '#5e4fa2',
+      ], // from nivo colors "spectral"
+      labelData.length,
   );
-
   const [colors, setColors] = useState(originalColors);
 
-  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked({ ...checked, [event.target.name]: event.target.checked });
-    console.log(event.target.name, event.target.checked);
-  };
-
   useEffect(() => {
-    setChartData(myData.filter(({ id }) => checked[id]));
-    setColors(originalColors.filter((_, index) => checked[myData[index].id]));
-  }, [checked]);
+    const x = async () => {
+      const d = await fetch('http://13.238.204.77:4433/tp_scores');
+      const data = await d.json();
+      const labels = data.map(({id}) => id);
+
+      setChartData(data);
+      setLabelData(labels);
+      // setReady(true);
+    };
+    x();
+  }, []);
+
   return (
     <ThemeProvider themeString={theme}>
       <StyledBackground>
@@ -111,31 +185,37 @@ function App() {
                 </Grid>
               </Grid>
               <Typography variant="subtitle1">
-                Custom Dashboard for Daisuki, The Ultimate Character Collection
-                Game!
+              Custom Dashboard for Daisuki, The Ultimate Character Collection
+              Game!
               </Typography>
             </Card>
           </Header>
-          <Card elevation={0}>
+          {/* <Card elevation={0}>
             <FormGroup row>
-              {myData.map(({ id }) => (
+              {labelData.map((id) => (
                 <FormControlLabel
+                  key={id}
                   control={
                     <Checkbox
                       checked={checked[id]}
                       onChange={handleCheck}
                       name={id}
-                      style={{ color: originalColors[idToIndex[id]] }}
+                      style={{color: colors[idToIndex[id]]}}
                     />
                   }
                   label={<Typography>{id}</Typography>}
                 />
               ))}
             </FormGroup>
-          </Card>
-          <LineGraph data={chartData} colors={colors} />
+          </Card> */}
+          <Graph
+            chartData={chartData}
+            labelData={labelData}
+            ready={true}
+          />
           <Card elevation={0}></Card>
         </StyledContainer>
+
       </StyledBackground>
     </ThemeProvider>
   );
