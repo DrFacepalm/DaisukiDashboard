@@ -2,25 +2,22 @@
 FROM python:3.8
 
 # Adding backend directory to make absolute filepaths consistent across services
-WORKDIR /api
+WORKDIR .
 
 # Install Python dependencies
-# COPY requirements.txt /api
-# RUN pip3 install --upgrade pip -r requirements.txt
-RUN pip3 install pipenv
-COPY Pipfile Pipfile.lock /api/
-RUN pipenv install --system
+COPY requirements.txt requirements.txt
 
-# Add the rest of the code
-COPY . /api/
+RUN pip3 install -r requirements.txt
 
 # Make port 8000 available for the app
 EXPOSE 4433
 
-# ENV MONGO_URL mongodb://mongo_user:this_is_a_safe_password@0.0.0.0:27017/ 
-# ENV FLASK_APP endpoints.py 
-# ENV FLASK_ENV development
+COPY . .
+
+ENV FLASK_ENV development
 
 # Be sure to use 0.0.0.0 for the host within the Docker container,
 # otherwise the browser won't be able to find it
-CMD pipenv run python -m flask run --port 4433 --host 0.0.0.0
+
+CMD [ "python3", "wsgi.py" ]
+# CMD [ "python3", "-m", "flask", "run", "--port", "4433", "--host", "0.0.0.0" ]
