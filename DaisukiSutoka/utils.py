@@ -54,7 +54,7 @@ def handle_wl_messsage(message, collection, rateLimiter):
 
 
 def handle_store_message(message, collection, rateLimiter):
-    if len(message.embeds) != 1 or "'s Store" not in message.embeds[0].title:
+    if len(message.embeds) != 1 or not message.embeds[0].title.endswith("'s Store"):
         return
 
     embed = message.embeds[0]
@@ -73,7 +73,7 @@ def handle_store_message(message, collection, rateLimiter):
 
 
 def handle_collection_message(message, collection, rateLimiter):
-    if len(message.embeds) != 1 or "'s Collection" not in message.embeds[0].title:
+    if len(message.embeds) != 1 or not message.embeds[0].title.endswith("'s Collection"):
         return
 
     embed = message.embeds[0]
@@ -89,6 +89,37 @@ def handle_collection_message(message, collection, rateLimiter):
     collection.find_one_and_update(
         {"player": player}, {"$push": {"sp-values": {"x": message.created_at, "y": sp}}}
     )
+
+def handle_profile_message(message, collection, rateLimiter):
+    if len(message.embeds) != 1 or not message.embeds[0].title.endswith("'s Profile"):
+        return
+    
+    embed = message.embeds[0]
+    player = embed.title.rsplit("'s ", 1)[0]
+
+    if rateLimiter.seconds_since_sp(message, player) > 60 * 30:
+        # TODO: handle sp
+        rateLimiter.update_sp(message, player)
+
+    # TODO: rate limit enchants
+        # TODO: handle enchant dust
+
+    # TODO: rate limit blessings
+        # TODO: handle blessings
+
+    # TODO: rate limit profile
+        # TODO: handle roll count and upgrade levels
+        # TODO: handle sp roll count and upgrade levels
+        # TODO: handle wl slot total and upgrade levels
+        # TODO: handle wl chances total and upgrade levels
+        # TODO: handle sp rates and upgrade levels
+        # TODO: handle power roll count and upgrade levels
+        # TODO: handle free claim count and upgrade levels
+        # TODO: handle sp claim multiplier and upgrade levels
+        # TODO: handle wishlist bonus multiplier and upgrade levels
+        # TODO: handle power claim multipler and upgrade levels
+        # TODO: handle extra affection and upgrade levels
+
 
 
 def convert2int(s):
