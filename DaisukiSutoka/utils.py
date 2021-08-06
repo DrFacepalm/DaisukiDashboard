@@ -1,4 +1,6 @@
 import re
+from typing import TextIO
+from config import tp_delay, sp_delay, enchant_delay, blessing_delay, profile_delay
 
 
 def handle_tp_message(message, collection, rateLimiter):
@@ -6,7 +8,7 @@ def handle_tp_message(message, collection, rateLimiter):
         return
 
     # Rate limiting things
-    if rateLimiter.seconds_since_tp(message) < 60 * 30:
+    if rateLimiter.seconds_since_tp(message) < tp_delay:
         return
     rateLimiter.update_tp(message)
 
@@ -60,7 +62,7 @@ def handle_store_message(message, collection, rateLimiter):
     embed = message.embeds[0]
     player = embed.title.rsplit("'s ", 1)[0]
 
-    if rateLimiter.seconds_since_sp(message, player) < 60 * 30:
+    if rateLimiter.seconds_since_sp(message, player) < sp_delay:
         return
     rateLimiter.update_sp(message, player)
 
@@ -73,13 +75,15 @@ def handle_store_message(message, collection, rateLimiter):
 
 
 def handle_collection_message(message, collection, rateLimiter):
-    if len(message.embeds) != 1 or not message.embeds[0].title.endswith("'s Collection"):
+    if len(message.embeds) != 1 or not message.embeds[0].title.endswith(
+        "'s Collection"
+    ):
         return
 
     embed = message.embeds[0]
     player = embed.title.rsplit("'s ", 1)[0]
 
-    if rateLimiter.seconds_since_sp(message, player) < 60 * 30:
+    if rateLimiter.seconds_since_sp(message, player) < sp_delay:
         return
     rateLimiter.update_sp(message, player)
 
@@ -90,24 +94,28 @@ def handle_collection_message(message, collection, rateLimiter):
         {"player": player}, {"$push": {"sp-values": {"x": message.created_at, "y": sp}}}
     )
 
+
 def handle_profile_message(message, collection, rateLimiter):
     if len(message.embeds) != 1 or not message.embeds[0].title.endswith("'s Profile"):
         return
-    
+
     embed = message.embeds[0]
     player = embed.title.rsplit("'s ", 1)[0]
 
-    if rateLimiter.seconds_since_sp(message, player) > 60 * 30:
+    if rateLimiter.seconds_since_sp(message, player) > sp_delay:
         # TODO: handle sp
         rateLimiter.update_sp(message, player)
 
-    # TODO: rate limit enchants
+    if rateLimiter.seconds_since_enchants(message, player) > enchant_delay:
         # TODO: handle enchant dust
+        rateLimiter.update_enchants(message, player)
 
-    # TODO: rate limit blessings
+    if rateLimiter.seconds_since_blessings(message, player) > blessing_delay:
         # TODO: handle blessings
+        rateLimiter.update_blessings(message, player)
 
-    # TODO: rate limit profile
+    if rateLimiter.seconds_since_profile(message, player) > profile_delay:
+        # TODO: handle max characters
         # TODO: handle roll count and upgrade levels
         # TODO: handle sp roll count and upgrade levels
         # TODO: handle wl slot total and upgrade levels
@@ -119,7 +127,7 @@ def handle_profile_message(message, collection, rateLimiter):
         # TODO: handle wishlist bonus multiplier and upgrade levels
         # TODO: handle power claim multipler and upgrade levels
         # TODO: handle extra affection and upgrade levels
-
+        rateLimiter.update_profile(message, player)
 
 
 def convert2int(s):

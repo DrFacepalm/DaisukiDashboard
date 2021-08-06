@@ -1,6 +1,7 @@
 import os
 import sys
 import discord
+import re
 
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -39,10 +40,84 @@ async def on_ready():
 @client.event
 async def on_message(message):
     if message.author.id == DAISUKI_USER_ID:
-        handle_profile_message(message, coll, rateLimiter)
-        if len(message.embeds) != 1 or not message.embeds[0].title.endswith("'s Collection"):
-            return
-        print(message.embeds[0].title)
+        if len(message.embeds) != 1 or not message.embeds[0].title.endswith("'s Profile"):
+            return  
+        embed = message.embeds[0]
+        print(embed.description)
+        """
+        **273,546 SP**
+        **0 Enchant Dust**
+        **4 Blessings**
+        **Amplify Rolls x55**
+        **Amplify SP Rolls x1**
+        **Amplify Power Rolls x1**
+        """
+        data = []
+        for field in embed.fields:
+            value = field.value
+            name = field.name
+            
+            m = re.match(r"Max Characters - ([0-9]+)", value)
+            if m:
+                m.group(0)
+            m = re.match(r"Rolls Total - (")
+            
+
+
+        #     if (value)
+
+        #     data.append([field.value, field.name])
+        
+        # for thing in data:
+
+        #     print(thing)
+
+        """
+        name 
+        value Max Characters - 28
+
+        name Upgrade Level 4 - Enchant Level 4 - Bless Level 1
+        value Rolls Total - 52
+
+        name Upgrade Level 4 - Enchant Level 3 - Bless Level 0
+        value SP Rolls Total - 7
+
+        name Upgrade Level 4 - Enchant Level 4
+        value Wishlist Slots Total - 13
+
+        name Upgrade Level 4 - Enchant Level 4
+        value Wishlist Chances Total - +8,000%
+
+        name Upgrade Level 4 - Enchant Level 3
+        value 💜 - 28% 💙 - 19% 💚 - 20% 🧡 - 33%
+
+        name Upgrade Level 2 - Enchant Level 2 - Bless Level 0
+        value Power Rolls Total - 4
+
+        name Upgrade Level 2 - Enchant Level 2 - Bless Level 0
+        value Free Claims Total - 4
+
+        name Upgrade Level 2 - Enchant Level 1 - Bless Level 0
+        value Power Claims Total - 3
+
+        name Upgrade Level 2 - Enchant Level 1 - Bless Level 0
+        value SP Claim Multiplier - x4
+
+        name Upgrade Level 2 - Enchant Level 1
+        value Wishlist Bonus Multiplier - x4
+
+        name Upgrade Level 0 - Enchant Level 0
+        value Power Claim Multiplier - x2
+
+        name Bless Level 0
+        value Extra Affection - 0
+        """
+
+
+        # handle_profile_message(message, coll, rateLimiter)
+        # if len(message.embeds) != 1 or not message.embeds[0].title.endswith("'s Collection"):
+        #     return
+        # print(message.embeds[0].title)
 
 # data = [];
 # for x in coll.find({}):
