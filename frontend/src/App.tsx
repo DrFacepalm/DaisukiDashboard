@@ -1,6 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import type {ChartData} from './types';
+
 import styled from 'styled-components';
-import {default as myData} from './data/data.json';
+import React, {useState, useEffect} from 'react';
+import ThemeProvider from './themes/ThemeProvider';
+import LineGraph from './components/nivo/LineGraph';
+import SettingsDialog from './components/settings/SettingsDialog';
+
 import {
   Typography,
   Container,
@@ -11,12 +16,8 @@ import {
   FormControlLabel,
   Checkbox,
 } from '@material-ui/core';
-import {useLocalStorage, fillRepeatArray} from './utils';
-import SettingsDialog from './components/settings/SettingsDialog';
-import ThemeProvider from './themes/ThemeProvider';
-import LineGraph from './components/nivo/LineGraph';
+import {useLocalStorage, fillRepeatArray, filterClusters} from './utils';
 
-type ChartData = typeof myData;
 
 const Header = styled.div`
   padding: 40px 0px;
@@ -43,7 +44,7 @@ function Graph(props: { ready: any; labelData: any; chartData: any }) {
       props.labelData.map((id, index) => [id, index]),
   );
 
-  const [displayData, setDisplayData] = useState(props.chartData); // [] as ChartData);
+  const [displayData, setDisplayData] = useState(props.chartData);
 
   const originalColors = fillRepeatArray(
       [
@@ -99,6 +100,7 @@ function Graph(props: { ready: any; labelData: any; chartData: any }) {
   return <div>Not Ready</div>;
 }
 
+
 /**
  *
  * @returns
@@ -144,7 +146,7 @@ function App() {
   useEffect(() => {
     const x = async () => {
       const d = await fetch('http://13.238.204.77:4433/tp_scores');
-      const data = await d.json();
+      const data = filterClusters(await d.json(), 12*60*60*1000);
       const labels = data.map(({id}) => id);
 
       setChartData(data);
@@ -186,26 +188,7 @@ function App() {
               </Typography>
             </Card>
           </Header>
-          {/* <Card elevation={0}>
-            <FormGroup row>
-              {labelData.map((id) => (
-                <FormControlLabel
-                  key={id}
-                  control={
-                    <Checkbox
-                      checked={checked[id]}
-                      onChange={handleCheck}
-                      name={id}
-                      style={{color: colors[idToIndex[id]]}}
-                    />
-                  label={<Typography>{id}</Typography>}
-                />
-              ))}
-            </FormGroup>
-          </Card> */}
-          {ready && (
-            <Graph chartData={chartData} labelData={labelData} ready={true} />
-          )}
+          <Graph chartData={chartData} labelData={labelData} ready={ready} />
           <Card elevation={0}></Card>
         </StyledContainer>
       </StyledBackground>
