@@ -112,7 +112,7 @@ const LineGraph = ({
           legendOffset: -80,
           legendPosition: 'middle',
         }}
-        // colors={{ scheme: "spectral" }}
+        // colors={{scheme: 'spectral'}}
         // colors={["#03C8B1", "#5AA8FF", "#D44086", "#EC9936", "#FFCC00"]}
         colors={colors}
         pointColor={{from: 'color'}}

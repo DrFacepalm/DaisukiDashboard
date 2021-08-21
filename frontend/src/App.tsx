@@ -32,11 +32,7 @@ const StyledContainer = styled(Container)`
   overflow-x: clip;
 `;
 
-function Graph(props: {
-  ready: any;
-  labelData: any;
-  chartData: any;
-}) {
+function Graph(props: { ready: any; labelData: any; chartData: any }) {
   const [checked, setChecked] = useState(
       Object.fromEntries(props.labelData.map((id) => [id, true])),
   );
@@ -47,7 +43,7 @@ function Graph(props: {
       props.labelData.map((id, index) => [id, index]),
   );
 
-  const [displayData, setDisplayData] = useState([] as ChartData);
+  const [displayData, setDisplayData] = useState(props.chartData); // [] as ChartData);
 
   const originalColors = fillRepeatArray(
       [
@@ -69,11 +65,13 @@ function Graph(props: {
 
   useEffect(() => {
     setDisplayData(props.chartData.filter(({id}) => checked[id]));
-    setColors(colors.filter((_, i) => checked[props.labelData[i].id]));
+    setColors(originalColors.filter((_, i) => checked[props.chartData[i].id]));
   }, [checked]);
 
   if (props.ready) {
-    setDisplayData(props.chartData);
+    // Not sure what this is for, commented out to prevent re-rendering loop
+    // setDisplayData(props.chartData);
+    console.log(displayData);
     return (
       <div>
         <Card elevation={0}>
@@ -96,7 +94,6 @@ function Graph(props: {
         </Card>
         <LineGraph data={displayData} colors={colors} />;
       </div>
-
     );
   }
   return <div>Not Ready</div>;
@@ -115,7 +112,6 @@ function App() {
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setTheme(event.target.value as string);
   };
-
 
   const [checked, setChecked] = useState(
       Object.fromEntries(labelData.map((id) => [id, true])),
@@ -153,7 +149,7 @@ function App() {
 
       setChartData(data);
       setLabelData(labels);
-      // setReady(true);
+      setReady(true);
     };
     x();
   }, []);
@@ -185,8 +181,8 @@ function App() {
                 </Grid>
               </Grid>
               <Typography variant="subtitle1">
-              Custom Dashboard for Daisuki, The Ultimate Character Collection
-              Game!
+                Custom Dashboard for Daisuki, The Ultimate Character Collection
+                Game!
               </Typography>
             </Card>
           </Header>
@@ -202,20 +198,16 @@ function App() {
                       name={id}
                       style={{color: colors[idToIndex[id]]}}
                     />
-                  }
                   label={<Typography>{id}</Typography>}
                 />
               ))}
             </FormGroup>
           </Card> */}
-          <Graph
-            chartData={chartData}
-            labelData={labelData}
-            ready={true}
-          />
+          {ready && (
+            <Graph chartData={chartData} labelData={labelData} ready={true} />
+          )}
           <Card elevation={0}></Card>
         </StyledContainer>
-
       </StyledBackground>
     </ThemeProvider>
   );
