@@ -33,7 +33,12 @@ const StyledContainer = styled(Container)`
   overflow-x: clip;
 `;
 
-function Graph(props: { ready: any; labelData: any; chartData: any }) {
+function Graph(props: { ready: any; labelData: any; chartData: any; colors: any; }) {
+  if (!props.ready) {
+    return (<div>No graph available,. It is coming for you.</div>);
+  }
+  // console.log('Label Data');
+  // console.log(props.labelData);
   const [checked, setChecked] = useState(
       Object.fromEntries(props.labelData.map((id) => [id, true])),
   );
@@ -44,60 +49,64 @@ function Graph(props: { ready: any; labelData: any; chartData: any }) {
       props.labelData.map((id, index) => [id, index]),
   );
 
+  useEffect(() => {
+    console.log('How log issit');
+    console.log(props.labelData.length);
+  }, []);
+
   const [displayData, setDisplayData] = useState(props.chartData);
 
-  const originalColors = fillRepeatArray(
-      [
-        '#9e0142',
-        '#d53e4f',
-        '#f46d43',
-        '#fdae61',
-        '#fee08b',
-        '#ffffbf',
-        '#e6f598',
-        '#abdda4',
-        '#66c2a5',
-        '#3288bd',
-        '#5e4fa2',
-      ], // from nivo colors "spectral"
-      props.chartData.length,
-  );
-  const [colors, setColors] = useState(originalColors);
+  // const originalColors = fillRepeatArray(
+  //     [
+  //       '#9e0142',
+  //       '#d53e4f',
+  //       '#f46d43',
+  //       '#fdae61',
+  //       '#fee08b',
+  //       '#ffffbf',
+  //       '#e6f598',
+  //       '#abdda4',
+  //       '#66c2a5',
+  //       '#3288bd',
+  //       '#5e4fa2',
+  //     ], // from nivo colors "spectral"
+  //     props.labelData.length,
+  // );
+  const [colors, setColors] = useState(props.colors);
 
+  console.log(colors);
   useEffect(() => {
     setDisplayData(props.chartData.filter(({id}) => checked[id]));
-    setColors(originalColors.filter((_, i) => checked[props.chartData[i].id]));
+    // setColors(colors.filter((_, i) => checked[props.labelData[i]]));
   }, [checked]);
 
-  if (props.ready) {
-    // Not sure what this is for, commented out to prevent re-rendering loop
-    // setDisplayData(props.chartData);
-    console.log(displayData);
-    return (
-      <div>
-        <Card elevation={0}>
-          <FormGroup row>
-            {props.labelData.map((id) => (
-              <FormControlLabel
-                key={id}
-                control={
-                  <Checkbox
-                    checked={checked[id]}
-                    onChange={handleCheck}
-                    name={id}
-                    style={{color: colors[idToIndex[id]]}}
-                  />
-                }
-                label={<Typography>{id}</Typography>}
-              />
-            ))}
-          </FormGroup>
-        </Card>
-        <LineGraph data={displayData} colors={colors} />;
-      </div>
-    );
-  }
-  return <div>Not Ready</div>;
+  // Not sure what this is for, commented out to prevent re-rendering loop
+  // setDisplayData(props.chartData);
+  console.log(idToIndex);
+  console.log(colors);
+  return (
+    <div>
+      <Card elevation={0}>
+        <FormGroup row>
+          {props.labelData.map((id) => (
+            <FormControlLabel
+              key={id}
+              control={
+                <Checkbox
+                  checked={checked[id]}
+                  onChange={handleCheck}
+                  name={id}
+                  style={{color: colors[idToIndex[id]]}}
+                />
+              }
+              label={<Typography>{id}</Typography>}
+            />
+          ))}
+        </FormGroup>
+      </Card>
+      <LineGraph data={displayData} colors={colors} />;
+    </div>
+  );
 }
 
 
@@ -148,7 +157,24 @@ function App() {
       const d = await fetch('http://13.238.204.77:4433/tp_scores');
       const data = filterClusters(await d.json(), 12*60*60*1000);
       const labels = data.map(({id}) => id);
+      const originalColors = fillRepeatArray(
+          [
+            '#9e0142',
+            '#d53e4f',
+            '#f46d43',
+            '#fdae61',
+            '#fee08b',
+            '#ffffbf',
+            '#e6f598',
+            '#abdda4',
+            '#66c2a5',
+            '#3288bd',
+            '#5e4fa2',
+          ], // from nivo colors "spectral"
+          labels.length,
+      );
 
+      setColors(originalColors);
       setChartData(data);
       setLabelData(labels);
       setReady(true);
@@ -188,7 +214,7 @@ function App() {
               </Typography>
             </Card>
           </Header>
-          <Graph chartData={chartData} labelData={labelData} ready={ready} />
+          <Graph chartData={chartData} labelData={labelData} ready={ready} colors={colors}/>
           <Card elevation={0}></Card>
         </StyledContainer>
       </StyledBackground>
