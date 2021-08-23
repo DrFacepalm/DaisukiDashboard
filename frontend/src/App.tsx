@@ -33,62 +33,38 @@ const StyledContainer = styled(Container)`
   overflow-x: clip;
 `;
 
-function Graph(props: { ready: any; labelData: any; chartData: any; colors: any; }) {
-  if (!props.ready) {
-    return (<div>No graph available,. It is coming for you.</div>);
+interface IGraph {
+  ready: boolean;
+  labelData: string[];
+  chartData: ChartData;
+  colors: string[];
+}
+
+function Graph({ready, labelData, chartData, colors}: IGraph) {
+  if (!ready) {
+    return (<div>Graph is coming for you.</div>);
   }
-  // console.log('Label Data');
-  // console.log(props.labelData);
   const [checked, setChecked] = useState(
-      Object.fromEntries(props.labelData.map((id) => [id, true])),
+      Object.fromEntries(labelData.map((id) => [id, true])),
   );
   const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked({...checked, [event.target.name]: event.target.checked});
   };
   const idToIndex = Object.fromEntries(
-      props.labelData.map((id, index) => [id, index]),
+      labelData.map((id, index) => [id, index]),
   );
 
+  const [displayData, setDisplayData] = useState(chartData);
+
   useEffect(() => {
-    console.log('How log issit');
-    console.log(props.labelData.length);
-  }, []);
-
-  const [displayData, setDisplayData] = useState(props.chartData);
-
-  // const originalColors = fillRepeatArray(
-  //     [
-  //       '#9e0142',
-  //       '#d53e4f',
-  //       '#f46d43',
-  //       '#fdae61',
-  //       '#fee08b',
-  //       '#ffffbf',
-  //       '#e6f598',
-  //       '#abdda4',
-  //       '#66c2a5',
-  //       '#3288bd',
-  //       '#5e4fa2',
-  //     ], // from nivo colors "spectral"
-  //     props.labelData.length,
-  // );
-  const [colors, setColors] = useState(props.colors);
-
-  console.log(colors);
-  useEffect(() => {
-    setDisplayData(props.chartData.filter(({id}) => checked[id]));
-    // setColors(colors.filter((_, i) => checked[props.labelData[i]]));
+    setDisplayData(chartData.filter(({id}) => checked[id]));
   }, [checked]);
 
-  // Not sure what this is for, commented out to prevent re-rendering loop
-  // setDisplayData(props.chartData);
-  console.log(idToIndex);
-  console.log(colors);
   return (
     <div>
       <Card elevation={0}>
         <FormGroup row>
-          {props.labelData.map((id) => (
+          {labelData.map((id) => (
             <FormControlLabel
               key={id}
               control={
@@ -124,33 +100,7 @@ function App() {
     setTheme(event.target.value as string);
   };
 
-  const [checked, setChecked] = useState(
-      Object.fromEntries(labelData.map((id) => [id, true])),
-  );
-  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked({...checked, [event.target.name]: event.target.checked});
-  };
-  const idToIndex = Object.fromEntries(
-      labelData.map((id, index) => [id, index]),
-  );
-
-  const originalColors = fillRepeatArray(
-      [
-        '#9e0142',
-        '#d53e4f',
-        '#f46d43',
-        '#fdae61',
-        '#fee08b',
-        '#ffffbf',
-        '#e6f598',
-        '#abdda4',
-        '#66c2a5',
-        '#3288bd',
-        '#5e4fa2',
-      ], // from nivo colors "spectral"
-      labelData.length,
-  );
-  const [colors, setColors] = useState(originalColors);
+  const [colors, setColors] = useState([] as string[]);
 
   useEffect(() => {
     const x = async () => {
