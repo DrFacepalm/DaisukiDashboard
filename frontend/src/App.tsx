@@ -107,7 +107,7 @@ function App() {
 
   useEffect(() => {
     const x = async () => {
-      const d = await fetch('http://13.238.204.77:4433/tp_scores');
+      const d = await fetch('https://13.238.204.77:4433/tp_scores');
       const data = filterClusters(await d.json(), 12*60*60*1000);
       await sleep(1000);
       const labels = data.map(({id}) => id);
