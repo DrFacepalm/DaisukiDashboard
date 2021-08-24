@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.8
+FROM python:3.8-slim-buster
 
 # Adding backend directory to make absolute filepaths consistent across services
 WORKDIR .
@@ -20,4 +20,3 @@ ENV FLASK_ENV development
 # otherwise the browser won't be able to find it
 
 CMD [ "python3", "wsgi.py" ]
-# CMD [ "python3", "-m", "flask", "run", "--port", "4433", "--host", "0.0.0.0" ]
