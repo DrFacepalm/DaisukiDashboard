@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,9 +10,9 @@ import {
   MenuItem,
   Link,
   Typography,
-} from "@material-ui/core";
+} from '@material-ui/core';
 
-import themesList from "../../themes/_list.json";
+import themesList from '../../themes/_list.json';
 
 type SettingsDialogProps = {
   open: boolean;
@@ -37,9 +37,9 @@ const SettingsDialog = ({
     <Dialog
       open={open}
       onClose={() => setOpen(false)}
-      scroll={"body"}
+      scroll={'body'}
       fullWidth={true}
-      maxWidth={"md"}
+      maxWidth={'md'}
     >
       <DialogTitle>
         <Typography variant="h5" color="primary">
@@ -60,17 +60,18 @@ const SettingsDialog = ({
           </Typography>
           <Select value={theme} onChange={handleChange}>
             {themesList
-              .sort((lhs: themesType, rhs: themesType) =>
-                lhs.name > rhs.name ? 1 : rhs.name > lhs.name ? -1 : 0
-              )
-              .map((theme: themesType) => (
-                <MenuItem
-                  style={{ color: theme.textColor, background: theme.bgColor }}
-                  value={theme.name}
-                >
-                  {theme.name}
-                </MenuItem>
-              ))}
+                .sort((lhs: themesType, rhs: themesType) =>
+                lhs.name > rhs.name ? 1 : rhs.name > lhs.name ? -1 : 0,
+                )
+                .map((theme: themesType) => (
+                  <MenuItem
+                    style={{color: theme.textColor, background: theme.bgColor}}
+                    value={theme.name}
+                    key={theme.name}
+                  >
+                    {theme.name}
+                  </MenuItem>
+                ))}
           </Select>
           <Typography variant="h6" color="primary">
             Creators:
