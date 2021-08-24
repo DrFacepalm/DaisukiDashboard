@@ -1,9 +1,11 @@
-type ChartData = Array<{
-    id: string,
-    data: Array<{
-        x: string,
-        y: number
-    }>
-}>
+type ChartEntry = {
+  id: string,
+  data: Array<{
+    x: string,
+    y: number
+  }>
+};
 
-export type {ChartData};
+type ChartData = Array<ChartEntry>;
+
+export type {ChartEntry, ChartData};

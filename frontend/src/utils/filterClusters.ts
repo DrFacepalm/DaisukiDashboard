@@ -1,11 +1,19 @@
-import type {ChartData} from '../types';
+import type {ChartEntry, ChartData} from '../types';
 
 const filterClusters = (data: ChartData, timeBuffer: number):ChartData => {
   const newdata = data.map((userData) => {
-    console.log('START', userData);
     let prevTime:Date;
     let thresholdTime:Date;
-    userData.data = userData.data.filter(({x})=> {
+    const filteredData: ChartEntry = userData;
+    const finalTime = new Date(userData.data[userData.data.length-1].x);
+    filteredData.data = userData.data.filter(({x}, index)=> {
+      if (index === userData.data.length - 1) {
+        return true;
+      }
+      const currentTime = new Date(x);
+      if ((finalTime.getTime() - currentTime.getTime()) < timeBuffer) {
+        return false;
+      }
       if (!prevTime) {
         prevTime = new Date(x);
         thresholdTime = new Date(prevTime.getTime() + timeBuffer);
@@ -19,11 +27,10 @@ const filterClusters = (data: ChartData, timeBuffer: number):ChartData => {
       } else {
         return false;
       }
-    } );
-    return userData;
+    });
+    return filteredData;
   });
-  console.log(newdata);
-  return data;
+  return newdata;
 };
 
 export default filterClusters;

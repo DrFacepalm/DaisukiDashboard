@@ -6,6 +6,8 @@ import ThemeProvider from './themes/ThemeProvider';
 import LineGraph from './components/nivo/LineGraph';
 import SettingsDialog from './components/settings/SettingsDialog';
 
+import {CircularProgress} from '@material-ui/core';
+
 import {
   Typography,
   Container,
@@ -16,7 +18,7 @@ import {
   FormControlLabel,
   Checkbox,
 } from '@material-ui/core';
-import {useLocalStorage, fillRepeatArray, filterClusters} from './utils';
+import {useLocalStorage, fillRepeatArray, filterClusters, sleep} from './utils';
 
 
 const Header = styled.div`
@@ -33,16 +35,21 @@ const StyledContainer = styled(Container)`
   overflow-x: clip;
 `;
 
-interface IGraph {
+interface GraphProps {
   ready: boolean;
-  labelData: string[];
+  labelData: Array<string>;
   chartData: ChartData;
-  colors: string[];
+  colors: Array<string>;
 }
 
-function Graph({ready, labelData, chartData, colors}: IGraph) {
+function Graph({ready, labelData, chartData, colors}: GraphProps) {
   if (!ready) {
-    return (<div>Graph is coming for you.</div>);
+    return (<Grid container justify="center" style={{'marginTop': '15vh'}}>
+      <Grid item>
+        <CircularProgress />
+      </Grid>
+    </Grid>
+    );
   }
   const [checked, setChecked] = useState(
       Object.fromEntries(labelData.map((id) => [id, true])),
@@ -86,10 +93,6 @@ function Graph({ready, labelData, chartData, colors}: IGraph) {
 }
 
 
-/**
- *
- * @returns
- */
 function App() {
   const [theme, setTheme] = useLocalStorage('theme', '8008');
   const [chartData, setChartData] = useState([] as ChartData);
@@ -100,12 +103,13 @@ function App() {
     setTheme(event.target.value as string);
   };
 
-  const [colors, setColors] = useState([] as string[]);
+  const [colors, setColors] = useState([] as Array<string>);
 
   useEffect(() => {
     const x = async () => {
       const d = await fetch('http://13.238.204.77:4433/tp_scores');
       const data = filterClusters(await d.json(), 12*60*60*1000);
+      await sleep(1000);
       const labels = data.map(({id}) => id);
       const originalColors = fillRepeatArray(
           [
