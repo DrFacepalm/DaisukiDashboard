@@ -19,6 +19,7 @@ import {
   Checkbox,
 } from '@material-ui/core';
 import {useLocalStorage, fillRepeatArray, filterClusters, sleep} from './utils';
+import Example from './components/visx/LineGraph';
 
 
 const Header = styled.div`
@@ -87,7 +88,8 @@ function Graph({ready, labelData, chartData, colors}: GraphProps) {
           ))}
         </FormGroup>
       </Card>
-      <LineGraph data={displayData} colors={colors} />;
+      {/* <LineGraph data={displayData} colors={colors} />; */}
+      <Example data={displayData} colors={colors} colourMapping={idToIndex}/>
     </div>
   );
 }
@@ -109,7 +111,7 @@ function App() {
     const x = async () => {
       const d = await fetch('https://13.238.204.77:4433/tp_scores');
       const data = filterClusters(await d.json(), 12*60*60*1000);
-      await sleep(1000);
+      await sleep(100);
       const labels = data.map(({id}) => id);
       const originalColors = fillRepeatArray(
           [

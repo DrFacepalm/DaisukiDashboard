@@ -87,6 +87,11 @@ const SettingsDialog = ({
                 <Link href="https://github.com/DrFacepalm">DrFacepalm</Link>
               </Typography>
             </li>
+            <li>
+              <Typography>
+                <Link href="https://github.com/Moop204/">Moop204</Link>
+              </Typography>
+            </li>
           </ul>
           <Typography variant="h6" color="primary">
             Source:
