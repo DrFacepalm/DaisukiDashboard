@@ -11,11 +11,9 @@ import {
   MarkerCircle,
   MarkerLine,
 } from '@visx/marker';
-import generateDateValue, {
-  DateValue,
-} from '@visx/mock-data/lib/generators/genDateValue';
 import {LineGraphData, LineGraphDataPoint} from '../nivo/LineGraph';
 import {AxisBottom, AxisLeft} from '@visx/axis';
+import {Label} from '@visx/annotation';
 
 type CurveType = keyof typeof allCurves;
 
@@ -58,18 +56,23 @@ export default function Example({
     domain: extent(data[0].data, getX) as [Date, Date],
   });
 
+  console.log(xScale);
+  console.log(extent(data[0].data, getX));
+
   const yMax = max(edgeSpData) as number;
   const yScale = scaleLinear<number>({
     domain: [0, yMax],
   });
 
   const width = 1000;
-  const axisPadding = 60;
+  const axisPadding = 70;
+  const bAxisPadding = 40;
   const height = 400;
   const showControls = true;
   const [curveType, setCurveType] = useState<CurveType>('curveNatural');
   const [showPoints, setShowPoints] = useState<boolean>(true);
-  const svgHeight = showControls ? height - 40 : height;
+
+  const svgHeight = showControls ? height - bAxisPadding : height;
   const lineHeight = svgHeight;
 
   // update scale output ranges
@@ -123,7 +126,8 @@ export default function Example({
           strokeOpacity={0.6}
           markerUnits="userSpaceOnUse"
         />
-        <MarkerCircle id="marker-circle" fill="transparent" size={2} refX={2} />
+
+        <MarkerCircle id="marker-circle" fill="transparent" size={2} refX={2}/>
         <MarkerArrow
           id="marker-arrow-odd"
           stroke="#333"
@@ -141,27 +145,35 @@ export default function Example({
             'url(#marker-arrow)' :
             'url(#marker-arrow-odd)';
           return (
-            <Group key={`lines-${i}`} top={0} left={60}>
+            <Group key={`lines-${i}`} top={0} left={axisPadding}>
               {showPoints &&
                 lineData.data.map((d, j) => (
-                  <circle
-                    key={i + j}
-                    r={2}
-                    cx={xScale(getX(d))}
-                    cy={yScale(getY(d))}
-                    stroke={colors[colourMapping[lineData.id]]}
-                    fill="transparent"
-                  />
+                  <>
+                    <circle
+                      key={i + j}
+                      r={2}
+                      cx={xScale(getX(d))}
+                      cy={yScale(getY(d))}
+                      stroke={colors[colourMapping[lineData.id]]}
+                      fill="transparent"
+                    />
+                  </>
                 ))}
               <AxisLeft scale={yScale} />
-              <text x="-70" y="15" transform="rotate(-90)" fontSize={10}>
+              <text x="-160" y="-60" transform="rotate(-90)" fontSize={10}>
                 Points
               </text>
               <AxisBottom
-                top={yMax-200}
+                top={height-bAxisPadding}
                 scale={xScale}
+                tickStroke="#000"
+                stroke="#000"
+                tickLabelProps={()=>({fill: '#000', fontSize: 11, textAnchor: 'middle'})}
                 numTicks={width > 520 ? 10 : 5}
               />
+              <text x={width/2} y={height} fontSize={10}>
+                Date
+              </text>
               <LinePath<LineGraphDataPoint>
                 curve={allCurves[curveType]}
                 data={lineData.data}

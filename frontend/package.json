@@ -19,6 +19,7 @@
     "@types/styled-components": "^5.1.11",
     "@typescript-eslint/eslint-plugin": "^4.28.5",
     "@typescript-eslint/parser": "^4.28.5",
+    "@visx/annotation": "^2.1.0",
     "@visx/axis": "^2.1.0",
     "@visx/visx": "^2.1.0",
     "eslint": "^7.31.0",
