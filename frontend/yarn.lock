@@ -2963,7 +2963,7 @@
     "@visx/group" "2.1.0"
     d3-cloud "^1.2.5"
 
-"@visx/xychart@2.1.0":
+"@visx/xychart@2.1.0", "@visx/xychart@^2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@visx/xychart/-/xychart-2.1.0.tgz#330f74ea6127b92a2d09d8615e3e0e73860ed5d4"
   integrity sha512-oz3N3+Mec0EiNtz6bsW9aD60DJkPKGGCScRwph9yvN/UbPWGGbPAM7rGtoOvRAbVXWJ+xP0+fKNSOQMjLCElNA==

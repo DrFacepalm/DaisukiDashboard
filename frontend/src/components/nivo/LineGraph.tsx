@@ -2,15 +2,7 @@ import React from 'react';
 import {ResponsiveLine, PointTooltip, Point} from '@nivo/line';
 import styled from 'styled-components';
 import {Card, CardContent, Typography} from '@material-ui/core';
-export type LineGraphData = {
-  id: string;
-  data: LineGraphDataPoint[];
-};
-
-export type LineGraphDataPoint = {
-  x: string;
-  y: number;
-};
+import {ChartEntry} from '../../types';
 
 const theme = {
   background: 'var(--bg-color)',
@@ -72,7 +64,7 @@ const LineGraph = ({
   data,
   colors,
 }: {
-  data: LineGraphData[];
+  data: ChartEntry[];
   colors: string[];
 }) => {
   return (

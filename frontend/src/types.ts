@@ -1,11 +1,13 @@
+type ChartPoint = {
+  x: string,
+  y: number
+}
+
 type ChartEntry = {
   id: string,
-  data: Array<{
-    x: string,
-    y: number
-  }>
+  data: Array<ChartPoint>
 };
 
 type ChartData = Array<ChartEntry>;
 
-export type {ChartEntry, ChartData};
+export type {ChartEntry, ChartData, ChartPoint};

@@ -11,19 +11,21 @@ import {
   MarkerCircle,
   MarkerLine,
 } from '@visx/marker';
-import {LineGraphData, LineGraphDataPoint} from '../nivo/LineGraph';
 import {AxisBottom, AxisLeft} from '@visx/axis';
-import {Label} from '@visx/annotation';
+import {CircleSubject, Connector, EditableAnnotation, Label} from '@visx/annotation';
+import {XYChart, Grid} from '@visx/xychart';
+import {ChartEntry, ChartData, ChartPoint} from '../../types';
+
 
 type CurveType = keyof typeof allCurves;
 
 const curveTypes = Object.keys(allCurves);
 
 // data accessors
-const getX = (d: LineGraphDataPoint) => {
+const getX = (d: ChartPoint) => {
   return new Date(d.x);
 };
-const getY = (d: LineGraphDataPoint) => {
+const getY = (d: ChartPoint) => {
   return d.y;
 };
 
@@ -38,7 +40,7 @@ export default function Example({
   colors,
   colourMapping,
 }: {
-  data: LineGraphData[];
+  data: ChartData;
   colors: string[];
   colourMapping: {
     [k: string]: number;
@@ -80,6 +82,7 @@ export default function Example({
   yScale.range([lineHeight - 2, 0]);
 
   console.log(colors);
+
 
   return (
     <div className="visx-curves-demo">
@@ -149,6 +152,21 @@ export default function Example({
               {showPoints &&
                 lineData.data.map((d, j) => (
                   <>
+                    <EditableAnnotation
+                      x={xScale(getX(d))}
+                      y={yScale(getY(d))}
+                      width={200}
+                      height={200}
+                      onDragEnd={()=>{}}
+
+                      dx={0} // x offset of label from subject
+                      dy={0} // y offset of label from subject
+                    >
+                      <Connector />
+                      <CircleSubject />
+                      <Label title="Context about this point" subtitle="More deets"/>
+                    </EditableAnnotation>
+
                     <circle
                       key={i + j}
                       r={2}
@@ -174,7 +192,7 @@ export default function Example({
               <text x={width/2} y={height} fontSize={10}>
                 Date
               </text>
-              <LinePath<LineGraphDataPoint>
+              <LinePath<ChartPoint>
                 curve={allCurves[curveType]}
                 data={lineData.data}
                 x={(d) => xScale(getX(d)) ?? 0}

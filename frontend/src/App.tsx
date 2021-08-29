@@ -20,6 +20,8 @@ import {
 } from '@material-ui/core';
 import {useLocalStorage, fillRepeatArray, filterClusters, sleep} from './utils';
 import Example from './components/visx/LineGraph';
+import ExampleXY from './components/visx/sample/XyChart';
+import {ChartGraph} from './components/visx/ChartGraph';
 
 
 const Header = styled.div`
@@ -89,7 +91,9 @@ function Graph({ready, labelData, chartData, colors}: GraphProps) {
         </FormGroup>
       </Card>
       {/* <LineGraph data={displayData} colors={colors} />; */}
-      <Example data={displayData} colors={colors} colourMapping={idToIndex}/>
+      {/* <Example data={displayData} colors={colors} colourMapping={idToIndex}/> */}
+      {/* <ExampleXY height={400} width={500} data={displayData}/> */}
+      <ChartGraph data={displayData} />
     </div>
   );
 }
