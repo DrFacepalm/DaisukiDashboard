@@ -15,10 +15,19 @@ const dataSample = cityTemperature.slice(225, 275);
 type Accessor = (d: ChartPoint) => number | Date;
 
 interface IChartGraph {
-  data: ChartData
+  data: ChartData;
+  colors: string[];
+  colourMapping: {
+    [k: string]: number;
+  };
 }
 
-const ChartGraph = ({data}: IChartGraph) => {
+const stringDateFormatted = (s: string): string => {
+  const date = new Date(s);
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
+};
+
+const ChartGraph = ({data, colors, colourMapping}: IChartGraph) => {
   console.log(dataSample);
   console.log(data);
   // data accessors
@@ -40,7 +49,7 @@ const ChartGraph = ({data}: IChartGraph) => {
   const yScaleConfig = {type: 'linear'} as const;
   const numTicks = 5;
   return (
-    <XYChart height={400} width={600} xScale={xScaleConfig} yScale={yScaleConfig}>
+    <XYChart height={400} width={window.innerWidth*0.95} xScale={xScaleConfig} yScale={yScaleConfig}>
       {data.map((userData: ChartEntry) => {
         return (
           <LineSeries
@@ -50,12 +59,13 @@ const ChartGraph = ({data}: IChartGraph) => {
             xAccessor={xAccessor}
             yAccessor={yAccessor}
             curve={curveLinear}
+            stroke={colors[colourMapping[userData.id]]}
           />
         );
       } )}
       <AnimatedAxis
         key={`sp-axis-y`}
-        label={'SP Value'}
+        label={'Score'}
         orientation={'left'}
         numTicks={numTicks}
         animationTrajectory={'center'}
@@ -76,11 +86,7 @@ const ChartGraph = ({data}: IChartGraph) => {
         //   return value;
         // }}
         animationTrajectory={'center'}
-        tickFormat={(val: Date, index, values) => {
-          console.log('THINGOOOO');
-          console.log(val);
-          console.log(index);
-          console.log(values);
+        tickFormat={(val: Date) => {
           return `${val.getFullYear()}-${val.getMonth()}-${val.getDate()}`;
         } }
       />
@@ -93,48 +99,27 @@ const ChartGraph = ({data}: IChartGraph) => {
         showDatumGlyph={true}
         showSeriesGlyphs={false}
         renderGlyph={undefined}
-        renderTooltip={({tooltipData, colorScale}) => (
-          <>
-            {/** date */}
-            {/* TODO: Use date format from Nivo LineGraph implementation */}
-            {(tooltipData?.nearestDatum?.datum &&
-                    new Date((tooltipData?.nearestDatum?.datum).x).toString() ) ||
+        renderTooltip={({tooltipData, colorScale}) => {
+          console.log(tooltipData);
+          return (
+            <>
+              {/** date */}
+              {/* TODO: Use date format from Nivo LineGraph implementation */}
+              {(tooltipData?.nearestDatum?.datum &&
+                    tooltipData?.nearestDatum?.key) ||
                     'No date'}
-            <br />
-            <br />
-            {(tooltipData?.nearestDatum?.datum &&
+              <br/>
+              {(tooltipData?.nearestDatum?.datum &&
+                    stringDateFormatted((tooltipData?.nearestDatum?.datum).x)) ||
+                    'No date'}
+              <br />
+              <br />
+              {(tooltipData?.nearestDatum?.datum &&
                     (tooltipData?.nearestDatum?.datum).y) ||
                     'No value'}
-            {/** temperatures */}
-            {/* {((sharedTooltip ?
-                    Object.keys(tooltipData?.datumByKey ?? {}) :
-                    [tooltipData?.nearestDatum?.key]
-                  ).filter((city) => city) as City[]).map((city) => {
-                    const temperature =
-                      tooltipData?.nearestDatum?.datum &&
-                      accessors[renderHorizontally ? 'x' : 'y'][city](
-                          tooltipData?.nearestDatum?.datum,
-                      );
-
-                    return (
-                      <div key={city}>
-                        <em
-                          style={{
-                            color: colorScale?.(city),
-                            textDecoration:
-                              tooltipData?.nearestDatum?.key === city ? 'underline' : undefined,
-                          }}
-                        >
-                          {city}
-                        </em>{' '}
-                        {temperature == null || Number.isNaN(temperature) ?
-                          '–' :
-                          `${temperature}° F`}
-                      </div>
-                    );
-                  })} */}
-          </>
-        )}
+            </>
+          );
+        }}
       />
 
 
