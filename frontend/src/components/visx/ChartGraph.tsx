@@ -5,7 +5,7 @@ import {curveLinear} from '@visx/curve';
 import {extent, max} from 'd3-array';
 import {scaleTime, scaleLinear} from '@visx/scale';
 import {ScaleConfig} from '@visx/scale';
-import {AnimatedAxis, Tooltip} from '@visx/xychart';
+import {AnimatedAxis, AnimatedGrid, Tooltip} from '@visx/xychart';
 import {AnimationTrajectory} from '@visx/react-spring/lib/types';
 
 import cityTemperature, {CityTemperature} from '@visx/mock-data/lib/mocks/cityTemperature';
@@ -24,7 +24,7 @@ interface IChartGraph {
 
 const stringDateFormatted = (s: string): string => {
   const date = new Date(s);
-  return `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 };
 
 const ChartGraph = ({data, colors, colourMapping}: IChartGraph) => {
@@ -47,7 +47,7 @@ const ChartGraph = ({data, colors, colourMapping}: IChartGraph) => {
 
   const xScaleConfig = {type: 'band', paddingInner: 0.3} as const;
   const yScaleConfig = {type: 'linear'} as const;
-  const numTicks = 5;
+  const numTicks = 10;
   return (
     <XYChart height={400} width={window.innerWidth*0.95} xScale={xScaleConfig} yScale={yScaleConfig}>
       {data.map((userData: ChartEntry) => {
@@ -87,8 +87,17 @@ const ChartGraph = ({data, colors, colourMapping}: IChartGraph) => {
         // }}
         animationTrajectory={'center'}
         tickFormat={(val: Date) => {
-          return `${val.getFullYear()}-${val.getMonth()}-${val.getDate()}`;
+          // console.log(val);
+          return `${val.getFullYear()}-${val.getMonth()+1}-${val.getDate()}`;
+          return 'AY';
         } }
+      />
+      <AnimatedGrid
+        key={`grid`}
+        rows={true}
+        columns={true}
+        animationTrajectory={'center'}
+        numTicks={numTicks}
       />
 
       <Tooltip<ChartPoint>
