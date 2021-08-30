@@ -93,7 +93,7 @@ function Graph({ready, labelData, chartData, colors}: GraphProps) {
       {/* <LineGraph data={displayData} colors={colors} />; */}
       {/* <Example data={displayData} colors={colors} colourMapping={idToIndex}/> */}
       {/* <ExampleXY height={400} width={500} data={displayData}/> */}
-      <ChartGraph data={displayData} colors={colors} colourMapping={idToIndex}/>
+      <ChartGraph data={displayData} colors={colors} colorMapping={idToIndex}/>
     </div>
   );
 }

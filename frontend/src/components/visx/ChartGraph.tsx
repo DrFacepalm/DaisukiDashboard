@@ -9,6 +9,7 @@ import {AnimatedAxis, AnimatedGrid, Tooltip} from '@visx/xychart';
 import {AnimationTrajectory} from '@visx/react-spring/lib/types';
 
 import cityTemperature, {CityTemperature} from '@visx/mock-data/lib/mocks/cityTemperature';
+import {Typography} from '@material-ui/core';
 const dataSample = cityTemperature.slice(225, 275);
 
 
@@ -17,17 +18,25 @@ type Accessor = (d: ChartPoint) => number | Date;
 interface IChartGraph {
   data: ChartData;
   colors: string[];
-  colourMapping: {
+  colorMapping: {
     [k: string]: number;
   };
 }
 
 const stringDateFormatted = (s: string): string => {
   const date = new Date(s);
-  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
 };
 
-const ChartGraph = ({data, colors, colourMapping}: IChartGraph) => {
+const stringDateTimeFormatted = (s: string): string => {
+  const date = new Date(s);
+  const year = date.getFullYear();
+  const hours = date.getHours() === 0 ? 12 : date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return `${year}-${date.getMonth()+1}-${date.getDate()} ${hours}:${minutes}`;
+};
+
+const ChartGraph = ({data, colors, colorMapping: colourMapping}: IChartGraph) => {
   console.log(dataSample);
   console.log(data);
   // data accessors
@@ -49,7 +58,7 @@ const ChartGraph = ({data, colors, colourMapping}: IChartGraph) => {
   const yScaleConfig = {type: 'linear'} as const;
   const numTicks = 10;
   return (
-    <XYChart height={400} width={window.innerWidth*0.95} xScale={xScaleConfig} yScale={yScaleConfig}>
+    <XYChart height={window.innerHeight*0.7} width={window.innerWidth*0.95} xScale={xScaleConfig} yScale={yScaleConfig}>
       {data.map((userData: ChartEntry) => {
         return (
           <LineSeries
@@ -88,7 +97,7 @@ const ChartGraph = ({data, colors, colourMapping}: IChartGraph) => {
         animationTrajectory={'center'}
         tickFormat={(val: Date) => {
           // console.log(val);
-          return `${val.getFullYear()}-${val.getMonth()+1}-${val.getDate()}`;
+          return stringDateFormatted(val.toString());
           return 'AY';
         } }
       />
@@ -105,29 +114,48 @@ const ChartGraph = ({data, colors, colourMapping}: IChartGraph) => {
         showVerticalCrosshair={true}
         snapTooltipToDatumX={true}
         snapTooltipToDatumY={true}
-        showDatumGlyph={true}
-        showSeriesGlyphs={false}
+        showDatumGlyph={false}
+        showSeriesGlyphs={true}
         renderGlyph={undefined}
+        // style={{color: colors[0]}}
+        // glyphStyle={{color: colors[0], colorRendering: colors[0]}}
         renderTooltip={({tooltipData, colorScale}) => {
-          console.log(tooltipData);
+          const closestUser = tooltipData?.nearestDatum?.key;
+          const userData = Object.keys(tooltipData?.datumByKey ?? {}).map( (user: string) => {
+            return (
+              <div key={user}>
+                <Typography variant={closestUser === user ? 'subtitle2':'caption'} style={{color: colors[colourMapping[user]]}}>{user}</Typography>: {tooltipData?.datumByKey[user].datum.y}
+              </div>
+            );
+          });
           return (
             <>
-              {/** date */}
-              {/* TODO: Use date format from Nivo LineGraph implementation */}
               {(tooltipData?.nearestDatum?.datum &&
-                    tooltipData?.nearestDatum?.key) ||
+                    stringDateTimeFormatted(tooltipData?.nearestDatum?.datum.x)) ||
                     'No date'}
               <br/>
-              {(tooltipData?.nearestDatum?.datum &&
-                    stringDateFormatted((tooltipData?.nearestDatum?.datum).x)) ||
-                    'No date'}
-              <br />
-              <br />
-              {(tooltipData?.nearestDatum?.datum &&
-                    (tooltipData?.nearestDatum?.datum).y) ||
-                    'No value'}
+              <br/>
+              {userData}
             </>
           );
+          // return (
+          //   <>
+          //     {/** date */}
+          //     {/* TODO: Use date format from Nivo LineGraph implementation */}
+          //     {(tooltipData?.nearestDatum?.datum &&
+          //           tooltipData?.nearestDatum?.key) ||
+          //           'No date'}
+          //     <br/>
+          //     {(tooltipData?.nearestDatum?.datum &&
+          //           stringDateFormatted((tooltipData?.nearestDatum?.datum).x)) ||
+          //           'No date'}
+          //     <br />
+          //     <br />
+          //     {(tooltipData?.nearestDatum?.datum &&
+          //           (tooltipData?.nearestDatum?.datum).y) ||
+          //           'No value'}
+          //   </>
+          // );
         }}
       />
 
